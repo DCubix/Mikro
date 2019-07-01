@@ -28,6 +28,7 @@ namespace mik {
 		{ "down", MikButtonDown },
 		{ "a", MikButtonA },
 		{ "b", MikButtonB },
+		{ "start", MikButtonStart },
 		{ "left_mouse", MikMouseLeft },
 		{ "middle_mouse", MikMouseMiddle },
 		{ "right_mouse", MikMouseRight },
@@ -103,10 +104,6 @@ namespace mik {
 			lastTime = currTime;
 			accum += delta;
 
-			for (auto&& [k, v] : m_input) {
-				v.pressed = false;
-				v.released = false;
-			}
 			while (SDL_PollEvent(&evt)) {
 				switch (evt.type) {
 					case SDL_QUIT: quit(); break;
@@ -160,6 +157,11 @@ namespace mik {
 
 				accum -= MikTimeStep;
 				canRender = true;
+
+				for (size_t i = 0; i < MikEventCount; i++) {
+					m_input[i].pressed = false;
+					m_input[i].released = false;
+				}
 			}
 
 			if (canRender) {
@@ -200,7 +202,8 @@ namespace mik {
 
 	/// Mik impl [INPUT]
 	bool Mik::buttonPressed(std::string const& name) {
-		std::string nam; std::transform(name.begin(), name.end(), nam.begin(), ::tolower);
+		std::string nam = name;
+		std::transform(nam.begin(), nam.end(), nam.begin(), ::tolower);
 		if (EventNames.find(nam) == EventNames.end()) {
 			LogE("\"", name, "\" is not a valid button name.");
 			return false;
@@ -211,7 +214,8 @@ namespace mik {
 	}
 
 	bool Mik::buttonReleased(std::string const& name) {
-		std::string nam; std::transform(name.begin(), name.end(), nam.begin(), ::tolower);
+		std::string nam = name;
+		std::transform(nam.begin(), nam.end(), nam.begin(), ::tolower);
 		if (EventNames.find(nam) == EventNames.end()) {
 			LogE("\"", name, "\" is not a valid button name.");
 			return false;
@@ -222,7 +226,8 @@ namespace mik {
 	}
 
 	bool Mik::buttonHeld(std::string const& name) {
-		std::string nam; std::transform(name.begin(), name.end(), nam.begin(), ::tolower);
+		std::string nam = name;
+		std::transform(nam.begin(), nam.end(), nam.begin(), ::tolower);
 		if (EventNames.find(nam) == EventNames.end()) {
 			LogE("\"", name, "\" is not a valid button name.");
 			return false;

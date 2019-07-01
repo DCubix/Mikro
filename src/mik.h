@@ -5,7 +5,7 @@
 #include "animator.h"
 
 #include <memory>
-#include <unordered_map>
+#include <array>
 
 #if !__has_include("SDL.h")
 #include "SDL2/SDL.h"
@@ -16,7 +16,7 @@
 namespace mik {
 	constexpr u32 MikScreenWidth = 320;
 	constexpr u32 MikScreenHeight = 240;
-	constexpr u32 MikScreenUpscale = 1;
+	constexpr u32 MikScreenUpscale = 2;
 	constexpr f32 MikTimeStep = 1.0 / 60.0;
 
 	enum MikEvent {
@@ -158,7 +158,7 @@ namespace mik {
 		struct EventState {
 			bool pressed{ false }, released{ false }, held{ false };
 		};
-		using InputDevice = std::unordered_map<MikEvent, EventState>;
+		using InputDevice = std::array<EventState, MikEventCount>;
 
 		InputDevice m_input;
 		i32 m_mouseX, m_mouseY;

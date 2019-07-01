@@ -10,9 +10,13 @@ add_definitions(-DSDL_MAIN_HANDLED)
 file(GLOB_RECURSE SRC "src/*.cpp" "src/*.c")
 
 find_package(SDL2 CONFIG REQUIRED)
-find_package(Lua REQUIRED Lua)
+find_package(Lua REQUIRED)
 
 add_executable(${PROJECT_NAME} ${SRC})
 target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 Lua)
 
+if (NOT UNIX)
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2 Lua)
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2 ${LUA_LIBRARIES})
+endif()

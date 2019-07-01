@@ -444,6 +444,7 @@ namespace mik {
 	}
 
 	void MikLua::call(std::string const& function) {
+		lua_settop(L, 0);
 		lua_getglobal(L, function.c_str());
 		if (lua_isfunction(L, -1) == 0) return;
 		if (lua_pcall(L, 0, 0, 0) != 0) {
@@ -452,6 +453,7 @@ namespace mik {
 	}
 
 	void MikLua::call(std::string const& function, float arg) {
+		lua_settop(L, 0);
 		lua_getglobal(L, function.c_str());
 		if (lua_isfunction(L, -1) == 0) return;
 		lua_pushnumber(L, arg);
