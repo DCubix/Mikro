@@ -1,7 +1,9 @@
 SPR = {
-	gems = nil
+	gems = nil,
+	font = nil
 }
-
+charMap = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ   ^_ abcdefghijklmnopqrstuvwxyz    "
+print(#charMap)
 boardSize = 8
 board = {
 	data = {},
@@ -10,6 +12,7 @@ board = {
 }
 boardCount = 0
 
+swapFail = false
 selected = nil
 target = nil
 time = 0
@@ -113,6 +116,23 @@ function board_print()
 	end
 end
 
+function is_neighbor(x, y, gem)
+	local ps = {
+		{ -1, 0 },
+		{ 1, 0 },
+		{ 0, -1 },
+		{ 0, 1 }
+	}
+	for i = 1, #ps do
+		local p = ps[i]
+		local g = board_get(x+p[1], y+p[2])
+		if g ~= nil and g ~= 0 and g == gem then
+			return true
+		end
+	end
+	return false
+end
+
 function board_swap(fx, fy, tx, ty)
 	local tmp = board.data[fy][fx]
 	board.data[fy][fx] = board.data[ty][tx]
@@ -121,6 +141,7 @@ end
 
 function _init()
 	SPR.gems = mik.load_sprite("../res/gems.png")
+	SPR.font = mik.load_sprite("../res/font2.png")
 	selectorAnim = mik.create_animator()
 	mik.add_animation(selectorAnim, "sel", { 32, 33, 34, 35, 36, 37 })
 	mik.play(selectorAnim, "sel", 0.1, true)
@@ -170,7 +191,7 @@ function _update(dt)
 					for x = 1, boardSize do
 						local tx = (x-1) * 26 + board.x
 						local ty = (y-1) * 26 + board.y
-						if mx > tx and mx < tx + 26 and my > ty and my < ty + 26 then
+						if mx > tx and mx < tx + 26 and my > ty and my < ty + 26 and is_neighbor(x, y, board_get(selected[1], selected[2])) then
 							target = { x, y }
 							state = STATE_SWAP
 							delay = 0.1
@@ -180,21 +201,28 @@ function _update(dt)
 				end
 			end
 		elseif state == STATE_SWAP then
-			local from = board_get(selected)
-			local to = board_get(target)
-			from.xa = from.x
-			from.xb = to.x
-			to.xa = to.x
-			to.xb = from.x
-			from.ya = from.y
-			from.yb = to.y
-			to.ya = to.y
-			to.yb = from.y
+			if selected[1] == target[1] and selected[2] == target[2] then
+				selected = nil
+				target = nil
+				state = STATE_IDLE
+				delay = 0.1
+			else
+				local from = board_get(selected)
+				local to = board_get(target)
+				from.xa = from.x
+				from.xb = to.x
+				to.xa = to.x
+				to.xb = from.x
+				from.ya = from.y
+				from.yb = to.y
+				to.ya = to.y
+				to.yb = from.y
 
-			from.t = 0
-			to.t = 0
+				from.t = 0
+				to.t = 0
 
-			state = STATE_SWAP_ANIM
+				state = STATE_SWAP_ANIM
+			end
 		elseif state == STATE_SWAP_ANIM then
 			local from = board_get(selected)
 			local to = board_get(target)
@@ -213,23 +241,24 @@ function _update(dt)
 			to.x = math.lerp(tsx, ttx, inout_back(to.t))
 			to.y = math.lerp(tsy, tty, inout_back(to.t))
 
-			from.t = from.t + dt * 2.0
-			to.t = to.t + dt * 2.0
+			from.t = from.t + dt * 4.0
+			to.t = to.t + dt * 4.0
 
 			if from.t >= 0.8 and to.t >= 0.8 then
-				local tmp = from
-				board_set(to, selected)
-				board_set(tmp, target)
-				selected = nil
-				target = nil
+				board_swap(selected[1], selected[2], target[1], target[2])
+				if swapFail then
+					selected = nil
+					target = nil
+					swapFail = false
+				end
 				state = STATE_CHECK
-				delay = 0.2
 			end
 		elseif state == STATE_CLEAR then
 			for y = 1, boardSize do
 				for x = 1, boardSize do
 					local b = board.data[y][x]
 					if b ~= 0 and b.matched then
+						score = score + (10 * b.gem)
 						board.data[y][x] = 0
 						boardCount = boardCount - 1
 					end
@@ -341,10 +370,22 @@ function _update(dt)
 					end
 				end
 				if matched > 0 then
+					selected = nil
+					target = nil
 					state = STATE_CLEAR
+					time = 0
 				else
-					state = STATE_IDLE
+					if target ~= nil and selected ~= nil then
+						local tmp = target
+						target = selected
+						selected = tmp
+						swapFail = true
+						state = STATE_SWAP
+					else
+						state = STATE_IDLE
+					end
 				end
+				delay = 0.2
 			end
 		end
 	end
@@ -396,7 +437,7 @@ function _draw()
 		end
 	end
 
-	mik.clip(board.x - 2, board.y - 2, boardSize * 26 + 4, boardSize * 26 + 4)
+	mik.clip(board.x - 7, board.y - 7, boardSize * 26 + 14, boardSize * 26 + 14)
 	for y = 1, boardSize do
 		for x = 1, boardSize do
 			local b = board_get(x, y)
@@ -412,8 +453,14 @@ function _draw()
 	if sel ~= nil and state ~= STATE_SWAP_ANIM then
 		local x = sel[1]
 		local y = sel[2]
-		local tx = board.data[y][x].x + board.x
-		local ty = board.data[y][x].y + board.y
-		mik.tile(SPR.gems,  5, 8,  mik.frame(selectorAnim),  tx, ty)
+		local g = board.data[y][x]
+		if g ~= nil and g ~= 0 then
+			local tx = g.x + board.x
+			local ty = g.y + board.y
+			mik.tile(SPR.gems,  5, 8,  mik.frame(selectorAnim),  tx, ty)
+		end
 	end
+
+	-- Score
+	mik.text(SPR.font, charMap,  "Score:\n"..score, 5, 5)
 end
