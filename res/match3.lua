@@ -15,6 +15,7 @@ board = {
 boardCount = 0
 
 swapFail = false
+swapped = false
 selected = nil
 target = nil
 time = 0
@@ -246,6 +247,7 @@ function _update(dt)
 				from.t = 0
 				to.t = 0
 
+				swapped = true
 				state = STATE_SWAP_ANIM
 			end
 		elseif state == STATE_SWAP_ANIM then
@@ -272,9 +274,6 @@ function _update(dt)
 					selected = nil
 					target = nil
 					swapFail = false
-					moves = moves + 1
-				else
-					moves = moves - 1
 				end
 				state = STATE_CHECK
 			end
@@ -378,6 +377,10 @@ function _update(dt)
 					target = nil
 					state = STATE_CLEAR
 					time = 0
+					if swapped then
+						moves = moves - 1
+						swapped = false
+					end
 				else
 					if target ~= nil and selected ~= nil then
 						local tmp = target
@@ -399,8 +402,9 @@ function _draw()
 	mik.clear()
 
 	-- Sky
-	mik.spr(SPR.sky, -bgX, 0)
-	mik.spr(SPR.sky, -bgX + 320, 0)
+	local skyX = -bgX * 0.5
+	mik.spr(SPR.sky, skyX, 0)
+	mik.spr(SPR.sky, skyX + 320, 0)
 
 	local gy = mik.height() - 49
 	for xm = 1, 35 do
@@ -493,7 +497,7 @@ function _draw()
 	local scoreTxt = string.format("%08d", score)
 
 	mik.text(SPR.font, charMap,
-	"Score\n"..scoreTxt.."\nMoves\n"..moves,
+	"Score\n"..scoreTxt,
 	9, 9)
 	mik.tile(SPR.gems,  5, 8,  2,  2, 3)
 	mik.tile(SPR.gems,  5, 8,  3,  55, 3)
