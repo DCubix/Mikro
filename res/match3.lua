@@ -1,8 +1,10 @@
 SPR = {
 	gems = nil,
-	font = nil
+	font = nil,
+	sky = nil,
+	grass = nil
 }
-charMap = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ   ^_ abcdefghijklmnopqrstuvwxyz    "
+charMap = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}"
 print(#charMap)
 boardSize = 8
 board = {
@@ -17,6 +19,7 @@ selected = nil
 target = nil
 time = 0
 score = 0
+moves = 25
 matched = 0
 
 STATE_IDLE = 0
@@ -32,6 +35,7 @@ STATE_SHIFT_ANIM = 8
 state = STATE_IDLE
 selectorAnim = nil
 delay = 0.0
+bgX = 0
 
 -- Tween...
 function inout_back(t, s)
@@ -100,7 +104,7 @@ end
 function new_gem(val, x, y)
 	local rx = (x - 1) * 26
 	local ry = (y - 1) * 26
-	local b = { gem = val, x = rx, y = ry, xa = rx, ya = ry, xb = rx, yb = ry, t = 0, matched = false }
+	local b = { gem = val, x = rx, y = ry, xa = rx, ya = ry, xb = rx, yb = ry, t = 0, matched = false, fallSpd = 1 }
 	board_set(b, x, y)
 end
 
@@ -142,6 +146,8 @@ end
 function _init()
 	SPR.gems = mik.load_sprite("../res/gems.png")
 	SPR.font = mik.load_sprite("../res/font2.png")
+	SPR.sky = mik.load_sprite("../res/sky.png")
+	SPR.grass = mik.load_sprite("../res/grass.png")
 	selectorAnim = mik.create_animator()
 	mik.add_animation(selectorAnim, "sel", { 32, 33, 34, 35, 36, 37 })
 	mik.play(selectorAnim, "sel", 0.1, true)
@@ -159,6 +165,25 @@ end
 
 function _update(dt)
 	time = time + dt
+	bgX = bgX + dt * 2.0
+	if bgX >= 320 then
+		bgX = 0
+	end
+
+	-- Animate falling
+	for y = 1, boardSize do
+		for x = 1, boardSize do
+			local b = board_get(x, y)
+			if b ~= 0 and b.t < 1.0 then
+				b.y = math.lerp(b.ya, b.yb, out_bounce(b.t))
+				b.t = b.t + dt * (1.0 / b.fallSpd) * 4.0
+			elseif b ~= 0 and b.t >= 0.99 then
+				-- Correct positions
+				b.x = (x - 1) * 26
+				b.y = (y - 1) * 26
+			end
+		end
+	end
 
 	if delay > 0.0 then
 		delay = delay - dt
@@ -241,18 +266,21 @@ function _update(dt)
 			to.x = math.lerp(tsx, ttx, inout_back(to.t))
 			to.y = math.lerp(tsy, tty, inout_back(to.t))
 
-			from.t = from.t + dt * 4.0
-			to.t = to.t + dt * 4.0
-
-			if from.t >= 0.8 and to.t >= 0.8 then
+			if from.t >= 1.0 and to.t >= 1.0 then
 				board_swap(selected[1], selected[2], target[1], target[2])
 				if swapFail then
 					selected = nil
 					target = nil
 					swapFail = false
+					moves = moves + 1
+				else
+					moves = moves - 1
 				end
 				state = STATE_CHECK
 			end
+
+			from.t = from.t + dt * 4.0
+			to.t = to.t + dt * 4.0
 		elseif state == STATE_CLEAR then
 			for y = 1, boardSize do
 				for x = 1, boardSize do
@@ -264,10 +292,8 @@ function _update(dt)
 					end
 				end
 			end
-
 			state = STATE_SHIFT
 		elseif state == STATE_ADD then
-			local addOnTop = board.data[2][1] ~= 0
 			local prev = 0
 			for x = 1, boardSize do
 				if board.data[1][x] == 0 then
@@ -278,11 +304,10 @@ function _update(dt)
 					end
 
 					new_gem(val, x, 1)
-					if addOnTop then
-						local g = board_get(x, 1)
-						g.y = g.y - 52
-						g.ya = g.ya - 52
-					end
+					local g = board_get(x, 1)
+					local p = 52 + math.random(0, 52)
+					g.y = g.y - p
+					g.ya = g.ya - p
 					boardCount = boardCount + 1
 					prev = val
 				end
@@ -290,7 +315,7 @@ function _update(dt)
 			state = STATE_SHIFT
 		elseif state == STATE_SHIFT then
 			for x = 1, boardSize do
-				for y = 1, boardSize do
+				for y = boardSize-1, 1, -1 do
 					if board.data[y][x] ~= 0 then
 						local chain = 1
 						while y + chain <= boardSize and board.data[y + chain][x] == 0 do
@@ -298,39 +323,18 @@ function _update(dt)
 						end
 						if chain - 1 > 0 then
 							local ny = y + chain - 1
+							board.data[y][x].ya = board.data[y][x].y
 							board.data[y][x].yb = ((ny-1) * 26)
 							board.data[y][x].t = 0
+							board.data[y][x].fallSpd = chain
 							board_swap(x, y, x, ny)
 							break
 						end
 					end
 				end
 			end
-			state = STATE_SHIFT_ANIM
-		elseif state == STATE_SHIFT_ANIM then
-			local done = true
-			for y = 1, boardSize do
-				for x = 1, boardSize do
-					local b = board_get(x, y)
-					if b ~= 0 and b.t < 1.0 then
-						b.y = math.lerp(b.ya, b.yb, (b.t))
-						b.t = b.t + dt * 8.0
-						done = false
-					end
-				end
-			end
-			if done then
-				for y = 1, boardSize do
-					for x = 1, boardSize do
-						local b = board_get(x, y)
-						if b ~= 0 then
-							b.x = (x - 1) * 26
-							b.y = (y - 1) * 26
-						end
-					end
-				end
-				state = STATE_CHECK
-			end
+			state = STATE_CHECK
+			delay = 0.2
 		elseif state == STATE_CHECK then
 			if boardCount < boardSize * boardSize then
 				state = STATE_ADD
@@ -389,15 +393,29 @@ function _update(dt)
 			end
 		end
 	end
-
 end
 
 function _draw()
 	mik.clear()
 
+	-- Sky
+	mik.spr(SPR.sky, -bgX, 0)
+	mik.spr(SPR.sky, -bgX + 320, 0)
+
+	local gy = mik.height() - 49
+	for xm = 1, 35 do
+		if xm == 1 then
+			mik.spr(SPR.grass, bgX, gy,  0, 0, 320, 16)
+			mik.spr(SPR.grass, bgX - 320, gy,  0, 0, 320, 16)
+		else
+			for xc = 1, xm do
+				mik.spr(SPR.grass, -bgX * xm + 320 * (xc-1), gy + 14 + xm,  0, 16 + xm, 320, 1)
+			end
+		end
+	end
 	-- Frame
 	local bs = boardSize + 1
-	mik.clip(board.x - 13, board.y - 13, bs * 26, bs * 26)
+	mik.clip(board.x - 12, board.y - 12, bs * 25 + 4, bs * 25 + 4)
 	for y = 1, bs+1 do
 		for x = 1, bs+1 do
 			local tx = (x - 1) * 26 + board.x - 26
@@ -450,7 +468,7 @@ function _draw()
 	mik.clip()
 
 	local sel = selected
-	if sel ~= nil and state ~= STATE_SWAP_ANIM then
+	if sel ~= nil and state ~= STATE_SWAP_ANIM and not swapFail then
 		local x = sel[1]
 		local y = sel[2]
 		local g = board.data[y][x]
@@ -462,5 +480,32 @@ function _draw()
 	end
 
 	-- Score
-	mik.text(SPR.font, charMap,  "Score:\n"..score, 5, 5)
+	mik.clip(3, 4, 26 * 3 - 1, 26 * 3 - 1)
+	for y = 1, 4 do
+		for x = 1, 4 do
+			local tx = (x - 1) * 26 + 2
+			local ty = (y - 1) * 26 + 3
+			mik.tile(SPR.gems,  5, 8,  12,  tx, ty)
+		end
+	end
+	mik.clip()
+
+	local scoreTxt = string.format("%08d", score)
+
+	mik.text(SPR.font, charMap,
+	"Score\n"..scoreTxt.."\nMoves\n"..moves,
+	9, 9)
+	mik.tile(SPR.gems,  5, 8,  2,  2, 3)
+	mik.tile(SPR.gems,  5, 8,  3,  55, 3)
+	mik.tile(SPR.gems,  5, 8,  10,  2, 55)
+	mik.tile(SPR.gems,  5, 8,  11,  55, 55)
+
+	mik.tile(SPR.gems,  5, 8,  4,  26, 3)
+	mik.tile(SPR.gems,  5, 8,  4,  32, 3)
+	mik.tile(SPR.gems,  5, 8,  5,  26, 55)
+	mik.tile(SPR.gems,  5, 8,  5,  32, 55)
+	mik.tile(SPR.gems,  5, 8,  6,  2, 26)
+	mik.tile(SPR.gems,  5, 8,  6,  2, 32)
+	mik.tile(SPR.gems,  5, 8,  7,  55, 26)
+	mik.tile(SPR.gems,  5, 8,  7,  55, 32)
 end
