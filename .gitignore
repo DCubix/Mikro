@@ -1,4 +1,7 @@
-.vs/
+.vs
+.exe
 .vscode
-build/
+build
 *.exe
+[Dd]ebug
+[Rr]elease
