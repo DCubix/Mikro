@@ -4,6 +4,10 @@ SPR = {
 	sky = nil,
 	grass = nil
 }
+SFX = {
+	match = nil,
+	drag = nil
+}
 charMap = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}"
 print(#charMap)
 boardSize = 8
@@ -149,6 +153,10 @@ function _init()
 	SPR.font = mik.load_sprite("../res/font2.png")
 	SPR.sky = mik.load_sprite("../res/sky.png")
 	SPR.grass = mik.load_sprite("../res/grass.png")
+
+	SFX.match = mik.load_sound("../res/match.wav")
+	SFX.drag = mik.load_sound("../res/drag.wav")
+
 	selectorAnim = mik.create_animator()
 	mik.add_animation(selectorAnim, "sel", { 32, 33, 34, 35, 36, 37 })
 	mik.play(selectorAnim, "sel", 0.1, true)
@@ -275,12 +283,14 @@ function _update(dt)
 					target = nil
 					swapFail = false
 				end
+				mik.play_sound(SFX.drag, 0.5)
 				state = STATE_CHECK
 			end
 
 			from.t = from.t + dt * 4.0
 			to.t = to.t + dt * 4.0
 		elseif state == STATE_CLEAR then
+			local clr = 0
 			for y = 1, boardSize do
 				for x = 1, boardSize do
 					local b = board.data[y][x]
@@ -288,8 +298,12 @@ function _update(dt)
 						score = score + (10 * b.gem)
 						board.data[y][x] = 0
 						boardCount = boardCount - 1
+						clr = clr + 1
 					end
 				end
+			end
+			if clr > 0 then
+				mik.play_sound(SFX.match)
 			end
 			state = STATE_SHIFT
 		elseif state == STATE_ADD then

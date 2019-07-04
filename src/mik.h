@@ -3,6 +3,7 @@
 
 #include "bitmap.h"
 #include "animator.h"
+#include "audio.h"
 
 #include <memory>
 #include <array>
@@ -135,6 +136,12 @@ namespace mik {
 		/// Creates an animator
 		Animator* createAnimator();
 
+		/// Loads a Sound
+		Sound* loadSound(std::string const& fileName);
+
+		/// Audio System
+		MikAudio* audio() { return m_audio.get(); }
+
 	private:
 		SDL_Window* m_window;
 		SDL_Renderer* m_renderer;
@@ -151,9 +158,15 @@ namespace mik {
 		/// Assets
 		std::vector<std::unique_ptr<Bitmap>> m_sprites;
 		std::vector<std::unique_ptr<Animator>> m_animators;
+		std::vector<std::unique_ptr<Sound>> m_sounds;
 		///
 
 		std::unique_ptr<MikGame> m_game;
+
+		/// Audio
+		std::unique_ptr<MikAudio> m_audio;
+		SDL_AudioDeviceID m_device;
+		///
 
 		struct EventState {
 			bool pressed{ false }, released{ false }, held{ false };

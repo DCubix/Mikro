@@ -352,6 +352,72 @@ namespace mik {
 		return 0;
 	}
 
+	MIK_LUA(load_sound) {
+		const char* fname = luaL_checkstring(L, 1);
+		Sound* snd = MIK->loadSound(std::string(fname));
+		lua_pushlightuserdata(L, snd);
+		return 1;
+	}
+
+	MIK_LUA(play_sound) {
+		Sound* snd = (Sound*) luaL_checklightuserdata(L, 1);
+		int args = lua_gettop(L);
+		f32 gain = 1.0f;
+		f32 pitch = 1.0f;
+		f32 pan = 0.0f;
+		if (args >= 2) {
+			gain = luaL_checknumber(L, 2);
+		}
+		if (args >= 3) {
+			pitch = luaL_checknumber(L, 3);
+		}
+		if (args >= 4) {
+			pan = luaL_checknumber(L, 4);
+		}
+		Voice* voc = MIK->audio()->play(snd, gain, pitch, pan);
+		lua_pushlightuserdata(L, voc);
+		return 1;
+	}
+
+	MIK_LUA(stop_sound) {
+		Sound* snd = (Sound*) luaL_checklightuserdata(L, 1);
+		MIK->audio()->stop(snd);
+		return 0;
+	}
+
+	MIK_LUA(volume) {
+		Voice* voc = (Voice*) luaL_checklightuserdata(L, 1);
+		if (lua_gettop(L) == 2) {
+			voc->gain = luaL_checknumber(L, 2);
+			return 0;
+		} else {
+			lua_pushnumber(L, voc->gain);
+			return 0;
+		}
+	}
+
+	MIK_LUA(pitch) {
+		Voice* voc = (Voice*) luaL_checklightuserdata(L, 1);
+		if (lua_gettop(L) == 2) {
+			voc->pitch = luaL_checknumber(L, 2);
+			return 0;
+		} else {
+			lua_pushnumber(L, voc->pitch);
+			return 0;
+		}
+	}
+
+	MIK_LUA(pan) {
+		Voice* voc = (Voice*) luaL_checklightuserdata(L, 1);
+		if (lua_gettop(L) == 2) {
+			voc->pan = luaL_checknumber(L, 2);
+			return 0;
+		} else {
+			lua_pushnumber(L, voc->pan);
+			return 0;
+		}
+	}
+
 	MIK_LUA(lerp) {
 		f32 a = luaL_checknumber(L, 1);
 		f32 b = luaL_checknumber(L, 2);
@@ -402,6 +468,12 @@ namespace mik {
 		MIK_ENTRY(anim),
 		MIK_ENTRY(play),
 		MIK_ENTRY(add_animation),
+		MIK_ENTRY(load_sound),
+		MIK_ENTRY(play_sound),
+		MIK_ENTRY(stop_sound),
+		MIK_ENTRY(volume),
+		MIK_ENTRY(pitch),
+		MIK_ENTRY(pan),
 		{ nullptr, nullptr }
 	};
 

@@ -7,6 +7,11 @@
 
 namespace mik {
 
+	static void mik_audio_callback(void* userdata, Uint8* stream, int len) {
+		MikAudio* audio = static_cast<MikAudio*>(userdata);
+		audio->mix((float*) stream, len / (sizeof(float) * 2));
+	}
+
 	static std::map<u32, MikEvent> EventMapping = {
 		{ SDLK_s, MikButtonLeft }, { SDLK_LEFT, MikButtonLeft },
 		{ SDLK_f, MikButtonRight }, { SDLK_RIGHT, MikButtonRight },
@@ -44,7 +49,8 @@ namespace mik {
 	};
 
 	Mik::Mik(MikGame* game)
-		: m_game(std::unique_ptr<MikGame>(game))
+		:	m_game(std::unique_ptr<MikGame>(game)),
+			m_audio(std::make_unique<MikAudio>())
 	{}
 
 	void Mik::run() {
@@ -91,9 +97,22 @@ namespace mik {
 		f64 accum = 0.0;
 		f64 lastTime = f64(SDL_GetTicks()) / 1000.0;
 
+		SDL_AudioSpec want, have;
+		want.format = AUDIO_F32;
+		want.freq = MikAudioFreq;
+		want.channels = 2;
+		want.userdata = m_audio.get();
+		want.samples = 4096;
+		want.callback = mik_audio_callback;
+
+		m_device = SDL_OpenAudioDevice(nullptr, 0, &want, &have, 0);
+		SDL_PauseAudioDevice(m_device, 0);
+
 		LogI("Mik has been started successfully!");
 
+		SDL_LockAudioDevice(m_device);
 		m_game->onInit(*this);
+		SDL_UnlockAudioDevice(m_device);
 
 		SDL_Event evt;
 		m_running = true;
@@ -148,7 +167,9 @@ namespace mik {
 
 			while (accum >= MikTimeStep) {
 				/// Update game
+				SDL_LockAudioDevice(m_device);
 				m_game->onUpdate(*this, f32(MikTimeStep));
+				SDL_UnlockAudioDevice(m_device);
 
 				/// Update animators
 				for (auto& anim : m_animators) {
@@ -189,6 +210,10 @@ namespace mik {
 			}
 		}
 		m_game->onExit(*this);
+
+		SDL_PauseAudioDevice(m_device, 1);
+		SDL_CloseAudioDevice(m_device);
+
 		m_sprites.clear();
 		m_animators.clear();
 
@@ -469,6 +494,11 @@ namespace mik {
 	Animator* Mik::createAnimator() {
 		m_animators.push_back(std::make_unique<Animator>());
 		return m_animators.back().get();
+	}
+
+	Sound* Mik::loadSound(std::string const& fileName) {
+		m_sounds.push_back(std::make_unique<Sound>(fileName));
+		return m_sounds.back().get();
 	}
 
 }
