@@ -1,10 +1,11 @@
 #ifndef MIK_ANIMATOR_H
 #define MIK_ANIMATOR_H
 
-#include "bitmap.h"
 #include <map>
 #include <vector>
 #include <initializer_list>
+
+#include "types.h"
 
 namespace mik {
 	/// Sprite sheet animator class
@@ -24,8 +25,6 @@ namespace mik {
 		const std::string& animation() const { return m_currentAnimation; }
 
 	protected:
-		Bitmap* m_bitmap;
-
 		struct Animation {
 			f32 speed, time;
 			u32 frame;

@@ -1,4 +1,4 @@
-#include "bitmap.h"
+#include "sprite.h"
 #include "png.inl"
 
 #include "log.h"
@@ -7,7 +7,7 @@
 #include <iterator>
 
 namespace mik {
-	Bitmap::Bitmap(std::string const& fileName) {
+	Sprite::Sprite(std::string const& fileName) {
 		std::ifstream fp(fileName, std::ios::binary);
 		if (fp.good()) {
 			fp.unsetf(std::ios::skipws);
@@ -40,7 +40,7 @@ namespace mik {
 		}
 	}
 
-	Bitmap::Bitmap(u32 width, u32 height) {
+	Sprite::Sprite(u32 width, u32 height) {
 		m_width = width;
 		m_height = height;
 		m_data.reserve(m_width * m_height);
@@ -49,7 +49,7 @@ namespace mik {
 		}
 	}
 
-	void Bitmap::dot(i32 x, i32 y, u8 r, u8 g, u8 b, bool ghost) {
+	void Sprite::dot(i32 x, i32 y, u8 r, u8 g, u8 b, bool ghost) {
 		if (x < 0 || x >= m_width || y < 0 || y >= m_height) return;
 		const u32 i = x + y * m_width;
 		m_data[i].r = r;
@@ -58,7 +58,7 @@ namespace mik {
 		m_data[i].ghost = ghost;
 	}
 
-	void Bitmap::clear(u8 r, u8 g, u8 b, bool ghost) {
+	void Sprite::clear(u8 r, u8 g, u8 b, bool ghost) {
 		for (u32 i = 0; i < m_width * m_height; i++) {
 			m_data[i].r = r;
 			m_data[i].g = g;
@@ -67,7 +67,7 @@ namespace mik {
 		}
 	}
 
-	Color Bitmap::get(i32 x, i32 y) {
+	Color Sprite::get(i32 x, i32 y) {
 		x = math::wrap(x, 0, i32(m_width));
 		y = math::wrap(y, 0, i32(m_height));
 		const u32 i = x + y * m_width;

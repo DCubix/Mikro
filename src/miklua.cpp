@@ -192,7 +192,7 @@ namespace mik {
 	}
 
 	MIK_LUA(spr) {
-		Bitmap* bmp = (Bitmap*) luaL_checklightuserdata(L, 1);
+		Sprite* bmp = (Sprite*) luaL_checklightuserdata(L, 1);
 		i32 x = i32(luaL_checknumber(L, 2));
 		i32 y = i32(luaL_checknumber(L, 3));
 		i32 sx = 0, sy = 0, sw = 0, sh = 0;
@@ -213,7 +213,7 @@ namespace mik {
 	}
 
 	MIK_LUA(tile) {
-		Bitmap* bmp = (Bitmap*) luaL_checklightuserdata(L, 1);
+		Sprite* bmp = (Sprite*) luaL_checklightuserdata(L, 1);
 		i32 rows = i32(luaL_checknumber(L, 2));
 		i32 cols = i32(luaL_checknumber(L, 3));
 		i32 index = i32(luaL_checknumber(L, 4));
@@ -231,7 +231,7 @@ namespace mik {
 	}
 
 	MIK_LUA(chr) {
-		Bitmap* fnt = (Bitmap*) luaL_checklightuserdata(L, 1);
+		Sprite* fnt = (Sprite*) luaL_checklightuserdata(L, 1);
 		const char* map = luaL_checkstring(L, 2);
 		const char* chrs = luaL_checkstring(L, 3);
 		if (strlen(chrs) == 0) {
@@ -245,7 +245,7 @@ namespace mik {
 	}
 
 	MIK_LUA(text) {
-		Bitmap* fnt = (Bitmap*) luaL_checklightuserdata(L, 1);
+		Sprite* fnt = (Sprite*) luaL_checklightuserdata(L, 1);
 		const char* map = luaL_checkstring(L, 2);
 		const char* txt = luaL_checkstring(L, 3);
 		i32 x = i32(luaL_checknumber(L, 4));
@@ -256,7 +256,7 @@ namespace mik {
 
 	MIK_LUA(load_sprite) {
 		const char* fname = luaL_checkstring(L, 1);
-		Bitmap* bmp = MIK->loadSprite(std::string(fname));
+		Sprite* bmp = MIK->loadSprite(std::string(fname));
 		lua_pushlightuserdata(L, bmp);
 		return 1;
 	}
@@ -264,13 +264,8 @@ namespace mik {
 	MIK_LUA(create_sprite) {
 		i32 w = i32(luaL_checknumber(L, 1));
 		i32 h = i32(luaL_checknumber(L, 2));
-		Bitmap* bmp = MIK->createSprite(w, h);
+		Sprite* bmp = MIK->createSprite(w, h);
 		lua_pushlightuserdata(L, bmp);
-		return 1;
-	}
-
-	MIK_LUA(create_animator) {
-		lua_pushlightuserdata(L, MIK->createAnimator());
 		return 1;
 	}
 
@@ -279,7 +274,7 @@ namespace mik {
 		if (lua_gettop(L) == 0) {
 			lua_pushinteger(L, MikScreenWidth);
 		} else {
-			Bitmap* bmp = (Bitmap*) luaL_checklightuserdata(L, 1);
+			Sprite* bmp = (Sprite*) luaL_checklightuserdata(L, 1);
 			lua_pushinteger(L, bmp->width());
 		}
 		return 1;
@@ -289,14 +284,14 @@ namespace mik {
 		if (lua_gettop(L) == 0) {
 			lua_pushinteger(L, MikScreenHeight);
 		} else {
-			Bitmap* bmp = (Bitmap*) luaL_checklightuserdata(L, 1);
+			Sprite* bmp = (Sprite*) luaL_checklightuserdata(L, 1);
 			lua_pushinteger(L, bmp->height());
 		}
 		return 1;
 	}
 
 	MIK_LUA(pget) {
-		Bitmap* bmp = (Bitmap*) luaL_checklightuserdata(L, 1);
+		Sprite* bmp = (Sprite*) luaL_checklightuserdata(L, 1);
 		i32 x = i32(luaL_checknumber(L, 2));
 		i32 y = i32(luaL_checknumber(L, 3));
 		Color col = bmp->get(x, y);
@@ -307,7 +302,7 @@ namespace mik {
 	}
 
 	MIK_LUA(pset) {
-		Bitmap* bmp = (Bitmap*) luaL_checklightuserdata(L, 1);
+		Sprite* bmp = (Sprite*) luaL_checklightuserdata(L, 1);
 		i32 x = i32(luaL_checknumber(L, 2));
 		i32 y = i32(luaL_checknumber(L, 3));
 		u8 r = u8(i32(luaL_checknumber(L, 4)) & 0xFF);
@@ -322,28 +317,28 @@ namespace mik {
 	}
 
 	MIK_LUA(frame) {
-		Animator* anim = (Animator*) luaL_checklightuserdata(L, 1);
-		lua_pushinteger(L, anim->frame());
+		Sprite* spr = (Sprite*) luaL_checklightuserdata(L, 1);
+		lua_pushinteger(L, spr->animator().frame());
 		return 1;
 	}
 
-	MIK_LUA(anim) {
-		Animator* ani = (Animator*) luaL_checklightuserdata(L, 1);
-		lua_pushstring(L, ani->animation().c_str());
+	MIK_LUA(animation) {
+		Sprite* spr = (Sprite*) luaL_checklightuserdata(L, 1);
+		lua_pushstring(L,spr->animator().animation().c_str());
 		return 1;
 	}
 
 	MIK_LUA(play) {
-		Animator* ani = (Animator*) luaL_checklightuserdata(L, 1);
+		Sprite* spr = (Sprite*) luaL_checklightuserdata(L, 1);
 		const char* name = luaL_checkstring(L, 2);
 		float speed = luaL_checknumber(L, 3);
 		bool loop = luaL_checkboolean(L, 4);
-		ani->play(std::string(name), speed, loop);
+		spr->animator().play(std::string(name), speed, loop);
 		return 0;
 	}
 
 	MIK_LUA(add_animation) {
-		Animator* ani = (Animator*) luaL_checklightuserdata(L, 1);
+		Sprite* spr = (Sprite*) luaL_checklightuserdata(L, 1);
 		const char* name = luaL_checkstring(L, 2);
 		if (lua_gettop(L) == 3) {
 			// Get frames table
@@ -357,9 +352,9 @@ namespace mik {
 				frames.push_back(u32(lua_tonumber( L, -1 )));
 				lua_pop(L, 1);
 			}
-			ani->add(std::string(name), frames);
+			spr->animator().add(std::string(name), frames);
 		} else {
-			ani->add(std::string(name));
+			spr->animator().add(std::string(name));
 		}
 		return 0;
 	}
@@ -404,7 +399,7 @@ namespace mik {
 			return 0;
 		} else {
 			lua_pushnumber(L, voc->gain);
-			return 0;
+			return 1;
 		}
 	}
 
@@ -415,7 +410,7 @@ namespace mik {
 			return 0;
 		} else {
 			lua_pushnumber(L, voc->pitch);
-			return 0;
+			return 1;
 		}
 	}
 
@@ -471,13 +466,12 @@ namespace mik {
 		MIK_ENTRY(text),
 		MIK_ENTRY(load_sprite),
 		MIK_ENTRY(create_sprite),
-		MIK_ENTRY(create_animator),
 		MIK_ENTRY(width),
 		MIK_ENTRY(height),
 		MIK_ENTRY(pget),
 		MIK_ENTRY(pset),
 		MIK_ENTRY(frame),
-		MIK_ENTRY(anim),
+		MIK_ENTRY(animation),
 		MIK_ENTRY(play),
 		MIK_ENTRY(add_animation),
 		MIK_ENTRY(load_sound),

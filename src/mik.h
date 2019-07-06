@@ -1,7 +1,7 @@
 #ifndef MIK_H
 #define MIK_H
 
-#include "bitmap.h"
+#include "sprite.h"
 #include "animator.h"
 #include "audio.h"
 
@@ -117,31 +117,28 @@ namespace mik {
 
 		/// Draws a sprite
 		void spr(
-			Bitmap* spr, i32 x, i32 y,
+			Sprite* spr, i32 x, i32 y,
 			i32 sx = 0, i32 sy = 0, i32 sw = 0, i32 sh = 0,
 			bool flipx = false, bool flipy = false
 		);
 
 		/// Draws a tile
 		void tile(
-			Bitmap* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y,
+			Sprite* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y,
 			bool flipx = false, bool flipy = false
 		);
 
 		/// Draws a character. Returns the X coord of the next char.
-		i32 chr(Bitmap* fnt, std::string const& charMap, char c, i32 x, i32 y);
+		i32 chr(Sprite* fnt, std::string const& charMap, char c, i32 x, i32 y);
 
 		/// Draws a string.
-		void text(Bitmap* fnt, std::string const& charMap, std::string const& text, i32 x, i32 y);
+		void text(Sprite* fnt, std::string const& charMap, std::string const& text, i32 x, i32 y);
 
-		/// Loads a sprite (Bitmap)
-		Bitmap* loadSprite(std::string const& fileName);
+		/// Loads a sprite (Sprite)
+		Sprite* loadSprite(std::string const& fileName);
 
-		// Creates a sprite (Bitmap)
-		Bitmap* createSprite(u32 w, u32 h);
-
-		/// Creates an animator
-		Animator* createAnimator();
+		// Creates a sprite (Sprite)
+		Sprite* createSprite(u32 w, u32 h);
 
 		/// Loads a Sound
 		Sound* loadSound(std::string const& fileName);
@@ -157,14 +154,13 @@ namespace mik {
 		bool m_running{ false };
 
 		/// GFX
-		Bitmap m_buffer;
+		Sprite m_buffer;
 		u32 m_clip[4];
 		Color m_key;
 		///
 
 		/// Assets
-		std::vector<std::unique_ptr<Bitmap>> m_sprites;
-		std::vector<std::unique_ptr<Animator>> m_animators;
+		std::vector<std::unique_ptr<Sprite>> m_sprites;
 		std::vector<std::unique_ptr<Sound>> m_sounds;
 		///
 

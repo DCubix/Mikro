@@ -1,7 +1,8 @@
-#ifndef MIK_BITMAP_H
-#define MIK_BITMAP_H
+#ifndef MIK_SPRITE_H
+#define MIK_SPRITE_H
 
 #include "types.h"
+#include "animator.h"
 #include <vector>
 #include <string>
 
@@ -11,16 +12,16 @@ namespace mik {
 		bool ghost{ false };
 	};
 
-	class Bitmap {
+	class Sprite {
 		public:
-			Bitmap() = default;
-			virtual ~Bitmap() = default;
+			Sprite() = default;
+			virtual ~Sprite() = default;
 
 			/// Load From PNG file
-			Bitmap(std::string const& fileName);
+			Sprite(std::string const& fileName);
 
 			/// Create blank
-			Bitmap(u32 width, u32 height);
+			Sprite(u32 width, u32 height);
 
 			/// Draw a pixel
 			void dot(i32 x, i32 y, u8 r, u8 g, u8 b, bool ghost = false);
@@ -35,7 +36,11 @@ namespace mik {
 			u32 width() const { return m_width; }
 			u32 height() const { return m_height; }
 
+			Animator& animator() { return m_animator; }
+
 		private:
+			Animator m_animator{};
+
 			u32 m_width, m_height;
 			std::vector<Color> m_data;
 	};
@@ -50,4 +55,4 @@ namespace mik {
 	);
 }
 
-#endif // MIK_BITMAP_H
+#endif // MIK_SPRITE_H

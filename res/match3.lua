@@ -38,8 +38,6 @@ STATE_CHECK = 7
 STATE_SHIFT_ANIM = 8
 
 state = STATE_IDLE
-selectorAnim = nil
-explodeAnim = nil
 delay = 0.0
 bgX = 0
 
@@ -160,12 +158,9 @@ function _init()
 	SFX.match = mik.load_sound("../res/match.wav")
 	SFX.drag = mik.load_sound("../res/drag.wav")
 
-	selectorAnim = mik.create_animator()
-	mik.add_animation(selectorAnim, "sel", { 40, 41, 42, 43, 44, 45, 46, 47 })
-	mik.play(selectorAnim, "sel", 0.1, true)
-
-	explodeAnim = mik.create_animator()
-	mik.add_animation(explodeAnim, "exp", { 26, 27, 28, 29, 30, 31 })
+	mik.add_animation(SPR.gems, "sel", { 40, 41, 42, 43, 44, 45, 46, 47 })
+	mik.add_animation(SPR.gems, "exp", { 26, 27, 28, 29, 30, 31 })
+	mik.play(SPR.gems, "sel", 0.1, true)
 
 	math.randomseed(os.time())
 	-- Create board
@@ -218,7 +213,7 @@ function _update(dt)
 					b.gem = 0
 					b.explode = true
 					state = STATE_CLEAR
-					mik.play(explodeAnim, "exp", 0.1, false)
+					mik.play(SPR.gems, "exp", 0.1, false)
 				end
 			end
 		end
@@ -241,6 +236,7 @@ function _update(dt)
 							if mx > tx and mx < tx + 26 and my > ty and my < ty + 26 then
 								selected = { x, y }
 								state = STATE_SELECT
+								mik.play(SPR.gems, "sel", 0.1, true)
 								break
 							end
 						end
@@ -530,10 +526,10 @@ function _draw()
 	end
 
 	for k, v in pairs(explosions) do
-		mik.tile(SPR.gems,  6, 8,  mik.frame(explodeAnim),  v[1] + board.x, v[2] + board.y)
+		mik.tile(SPR.gems,  6, 8,  mik.frame(SPR.gems),  v[1] + board.x, v[2] + board.y)
 	end
 
-	if mik.frame(explodeAnim) >= 31 then
+	if mik.frame(SPR.gems) >= 31 then
 		explosions = {}
 	end
 
@@ -547,7 +543,7 @@ function _draw()
 		if g ~= nil and g ~= 0 then
 			local tx = g.x + board.x
 			local ty = g.y + board.y
-			mik.tile(SPR.gems,  6, 8,  mik.frame(selectorAnim),  tx, ty)
+			mik.tile(SPR.gems,  6, 8,  mik.frame(SPR.gems),  tx, ty)
 		end
 	end
 
@@ -564,9 +560,8 @@ function _draw()
 
 	local scoreTxt = string.format("%08d", score)
 
-	mik.text(SPR.font, charMap,
-	"Score\n"..scoreTxt,
-	9, 9)
+	mik.text(SPR.font, charMap, "Score\n"..scoreTxt, 9, 9)
+
 	mik.tile(SPR.gems,  6, 8,  2,  2, 3)
 	mik.tile(SPR.gems,  6, 8,  3,  55, 3)
 	mik.tile(SPR.gems,  6, 8,  10,  2, 55)

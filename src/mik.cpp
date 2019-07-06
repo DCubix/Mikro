@@ -90,7 +90,7 @@ namespace mik {
 			MikScreenWidth, MikScreenHeight
 		);
 
-		m_buffer = Bitmap(MikScreenWidth, MikScreenHeight);
+		m_buffer = Sprite(MikScreenWidth, MikScreenHeight);
 		m_clip[0] = m_clip[1] = m_clip[2] = m_clip[3] = 0;
 		m_key = { 255, 0, 255, false };
 
@@ -172,8 +172,8 @@ namespace mik {
 				SDL_UnlockAudioDevice(m_device);
 
 				/// Update animators
-				for (auto& anim : m_animators) {
-					anim->update(f32(MikTimeStep));
+				for (auto& spr : m_sprites) {
+					spr->animator().update(f32(MikTimeStep));
 				}
 
 				accum -= MikTimeStep;
@@ -215,7 +215,6 @@ namespace mik {
 		SDL_CloseAudioDevice(m_device);
 
 		m_sprites.clear();
-		m_animators.clear();
 
 		LogI("Mik has been stopped successfully!");
 
@@ -406,7 +405,7 @@ namespace mik {
 		}
 	}
 
-	void Mik::spr(Bitmap* spr, i32 x, i32 y, i32 sx, i32 sy, i32 sw, i32 sh, bool flipx, bool flipy) {
+	void Mik::spr(Sprite* spr, i32 x, i32 y, i32 sx, i32 sy, i32 sw, i32 sh, bool flipx, bool flipy) {
 		if (spr == nullptr) {
 			LogE("Invalid sprite.");
 			return;
@@ -430,7 +429,7 @@ namespace mik {
 		}
 	}
 
-	void Mik::tile(Bitmap* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y, bool flipx, bool flipy) {
+	void Mik::tile(Sprite* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y, bool flipx, bool flipy) {
 		if (spr == nullptr) {
 			LogE("Invalid sprite.");
 			return;
@@ -442,7 +441,7 @@ namespace mik {
 		this->spr(spr, x, y, sx, sy, sw, sh, flipx, flipy);
 	}
 
-	i32 Mik::chr(Bitmap* fnt, std::string const& charMap, char c, i32 x, i32 y) {
+	i32 Mik::chr(Sprite* fnt, std::string const& charMap, char c, i32 x, i32 y) {
 		if (fnt == nullptr) {
 			LogE("Invalid font.");
 			return -1;
@@ -456,7 +455,7 @@ namespace mik {
 		return x + cw;
 	}
 
-	void Mik::text(Bitmap* fnt, std::string const& charMap, std::string const& text, i32 x, i32 y) {
+	void Mik::text(Sprite* fnt, std::string const& charMap, std::string const& text, i32 x, i32 y) {
 		if (fnt == nullptr) {
 			LogE("Invalid font.");
 			return;
@@ -477,27 +476,22 @@ namespace mik {
 		}
 	}
 
-	Bitmap* Mik::loadSprite(std::string const& fileName) {
+	Sprite* Mik::loadSprite(std::string const& fileName) {
 		if (fileName.empty()) {
 			LogE("Invalid file name.");
 			return nullptr;
 		}
-		m_sprites.push_back(std::make_unique<Bitmap>(fileName));
+		m_sprites.push_back(std::make_unique<Sprite>(fileName));
 		return m_sprites.back().get();
 	}
 
-	Bitmap* Mik::createSprite(u32 w, u32 h) {
+	Sprite* Mik::createSprite(u32 w, u32 h) {
 		if (w == 0 || h == 0) {
 			LogE("Invalid dimensions.");
 			return nullptr;
 		}
-		m_sprites.push_back(std::make_unique<Bitmap>(w, h));
+		m_sprites.push_back(std::make_unique<Sprite>(w, h));
 		return m_sprites.back().get();
-	}
-
-	Animator* Mik::createAnimator() {
-		m_animators.push_back(std::make_unique<Animator>());
-		return m_animators.back().get();
 	}
 
 	Sound* Mik::loadSound(std::string const& fileName) {
