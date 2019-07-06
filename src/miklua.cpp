@@ -195,15 +195,20 @@ namespace mik {
 		Bitmap* bmp = (Bitmap*) luaL_checklightuserdata(L, 1);
 		i32 x = i32(luaL_checknumber(L, 2));
 		i32 y = i32(luaL_checknumber(L, 3));
-		if (lua_gettop(L) > 3) {
-			i32 sx = i32(luaL_checknumber(L, 4));
-			i32 sy = i32(luaL_checknumber(L, 5));
-			i32 sw = i32(luaL_checknumber(L, 6));
-			i32 sh = i32(luaL_checknumber(L, 7));
-			MIK->spr(bmp, x, y, sx, sy, sw, sh);
-		} else {
-			MIK->spr(bmp, x, y);
+		i32 sx = 0, sy = 0, sw = 0, sh = 0;
+		bool flipx = false, flipy = false;
+		if (lua_gettop(L) == 7) {
+			sx = i32(luaL_checknumber(L, 4));
+			sy = i32(luaL_checknumber(L, 5));
+			sw = i32(luaL_checknumber(L, 6));
+			sh = i32(luaL_checknumber(L, 7));
 		}
+		if (lua_gettop(L) >= 8) {
+			flipx = luaL_checkboolean(L, 8);
+		} else if (lua_gettop(L) == 9) {
+			flipy = luaL_checkboolean(L, 9);
+		}
+		MIK->spr(bmp, x, y, sx, sy, sw, sh, flipx, flipy);
 		return 0;
 	}
 
@@ -214,7 +219,14 @@ namespace mik {
 		i32 index = i32(luaL_checknumber(L, 4));
 		i32 x = i32(luaL_checknumber(L, 5));
 		i32 y = i32(luaL_checknumber(L, 6));
-		MIK->tile(bmp, rows, cols, index, x, y);
+		bool flipx = false, flipy = false;
+		if (lua_gettop(L) >= 7) {
+			flipx = luaL_checkboolean(L, 7);
+		}
+		if (lua_gettop(L) == 8) {
+			flipy = luaL_checkboolean(L, 8);
+		}
+		MIK->tile(bmp, rows, cols, index, x, y, flipx, flipy);
 		return 0;
 	}
 

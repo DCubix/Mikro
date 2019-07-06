@@ -116,10 +116,17 @@ namespace mik {
 		void circf(i32 x1, i32 y1, i32 radius, u8 r, u8 g, u8 b);
 
 		/// Draws a sprite
-		void spr(Bitmap* spr, i32 x, i32 y, i32 sx = 0, i32 sy = 0, i32 sw = 0, i32 sh = 0);
+		void spr(
+			Bitmap* spr, i32 x, i32 y,
+			i32 sx = 0, i32 sy = 0, i32 sw = 0, i32 sh = 0,
+			bool flipx = false, bool flipy = false
+		);
 
 		/// Draws a tile
-		void tile(Bitmap* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y);
+		void tile(
+			Bitmap* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y,
+			bool flipx = false, bool flipy = false
+		);
 
 		/// Draws a character. Returns the X coord of the next char.
 		i32 chr(Bitmap* fnt, std::string const& charMap, char c, i32 x, i32 y);

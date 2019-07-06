@@ -406,19 +406,23 @@ namespace mik {
 		}
 	}
 
-	void Mik::spr(Bitmap* spr, i32 x, i32 y, i32 sx, i32 sy, i32 sw, i32 sh) {
+	void Mik::spr(Bitmap* spr, i32 x, i32 y, i32 sx, i32 sy, i32 sw, i32 sh, bool flipx, bool flipy) {
 		if (spr == nullptr) {
 			LogE("Invalid sprite.");
 			return;
 		}
 		i32 w = sw > 0 ? sw : spr->width();
 		i32 h = sh > 0 ? sh : spr->height();
+
 		for (u32 iy = 0; iy < h; iy++) {
 			for (u32 ix = 0; ix < w; ix++) {
 				i32 px = ix + x;
 				i32 py = iy + y;
 
-				Color col = spr->get(ix + sx, iy + sy);
+				i32 srcx = flipx ? w - 1 - ix : ix;
+				i32 srcy = flipy ? h - 1 - iy : iy;
+
+				Color col = spr->get(srcx + sx, srcy + sy);
 				if (col.ghost) continue;
 
 				dot(px, py, col.r, col.g, col.b);
@@ -426,7 +430,7 @@ namespace mik {
 		}
 	}
 
-	void Mik::tile(Bitmap* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y) {
+	void Mik::tile(Bitmap* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y, bool flipx, bool flipy) {
 		if (spr == nullptr) {
 			LogE("Invalid sprite.");
 			return;
@@ -435,7 +439,7 @@ namespace mik {
 		i32 sh = std::floor(spr->height() / rows);
 		i32 sx = (index % cols) * sw;
 		i32 sy = std::floor(index / cols) * sh;
-		this->spr(spr, x, y, sx, sy, sw, sh);
+		this->spr(spr, x, y, sx, sy, sw, sh, flipx, flipy);
 	}
 
 	i32 Mik::chr(Bitmap* fnt, std::string const& charMap, char c, i32 x, i32 y) {

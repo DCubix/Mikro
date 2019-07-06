@@ -9,7 +9,7 @@ SFX = {
 	drag = nil
 }
 charMap = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_'abcdefghijklmnopqrstuvwxyz{|}"
-print(#charMap)
+
 boardSize = 8
 board = {
 	data = {},
@@ -39,8 +39,11 @@ STATE_SHIFT_ANIM = 8
 
 state = STATE_IDLE
 selectorAnim = nil
+explodeAnim = nil
 delay = 0.0
 bgX = 0
+
+explosions = {}
 
 -- Tween...
 function inout_back(t, s)
@@ -109,7 +112,7 @@ end
 function new_gem(val, x, y)
 	local rx = (x - 1) * 26
 	local ry = (y - 1) * 26
-	local b = { gem = val, x = rx, y = ry, xa = rx, ya = ry, xb = rx, yb = ry, t = 0, matched = false, fallSpd = 1 }
+	local b = { gem = val, x = rx, y = ry, xa = rx, ya = ry, xb = rx, yb = ry, t = 0, matched = false, fallSpd = 1, bomb = false, timer = 0, explode = false }
 	board_set(b, x, y)
 end
 
@@ -158,8 +161,11 @@ function _init()
 	SFX.drag = mik.load_sound("../res/drag.wav")
 
 	selectorAnim = mik.create_animator()
-	mik.add_animation(selectorAnim, "sel", { 32, 33, 34, 35, 36, 37 })
+	mik.add_animation(selectorAnim, "sel", { 40, 41, 42, 43, 44, 45, 46, 47 })
 	mik.play(selectorAnim, "sel", 0.1, true)
+
+	explodeAnim = mik.create_animator()
+	mik.add_animation(explodeAnim, "exp", { 26, 27, 28, 29, 30, 31 })
 
 	math.randomseed(os.time())
 	-- Create board
@@ -183,13 +189,37 @@ function _update(dt)
 	for y = 1, boardSize do
 		for x = 1, boardSize do
 			local b = board_get(x, y)
-			if b ~= 0 and b.t < 1.0 then
-				b.y = math.lerp(b.ya, b.yb, out_bounce(b.t))
-				b.t = b.t + dt * (1.0 / b.fallSpd) * 4.0
-			elseif b ~= 0 and b.t >= 0.99 then
-				-- Correct positions
-				b.x = (x - 1) * 26
-				b.y = (y - 1) * 26
+			if b ~= 0 then
+				if b.t < 1.0 then
+					b.y = math.lerp(b.ya, b.yb, out_bounce(b.t))
+					b.t = b.t + dt * (1.0 / b.fallSpd) * 4.0
+				elseif b.t >= 0.99 then
+					-- Correct positions
+					b.x = (x - 1) * 26
+					b.y = (y - 1) * 26
+				end
+
+				if b.timer > 0 and b.bomb then
+					b.timer = b.timer - dt
+				elseif b.timer <= 0 and b.bomb then
+					-- Explode
+					for oy = -1, 1 do
+						for ox = -1, 1 do
+							local n = board_get(x + ox, y + oy)
+							if n ~= 0 then
+								n.matched = true
+								n.explode = true
+								table.insert(explosions, { n.x, n.y })
+							end
+						end
+					end
+					b.matched = true
+					b.bomb = false
+					b.gem = 0
+					b.explode = true
+					state = STATE_CLEAR
+					mik.play(explodeAnim, "exp", 0.1, false)
+				end
 			end
 		end
 	end
@@ -294,11 +324,13 @@ function _update(dt)
 			for y = 1, boardSize do
 				for x = 1, boardSize do
 					local b = board.data[y][x]
-					if b ~= 0 and b.matched then
+					if b ~= 0 and b.matched and b.gem ~= 10 then
 						score = score + (10 * b.gem)
 						board.data[y][x] = 0
 						boardCount = boardCount - 1
 						clr = clr + 1
+					elseif b ~= 0 and b.matched and b.gem == 10 then
+						b.matched = false
 					end
 				end
 			end
@@ -311,9 +343,9 @@ function _update(dt)
 			for x = 1, boardSize do
 				if board.data[1][x] == 0 then
 					-- unique number
-					local val = math.random(1, 4)
+					local val = math.random(1, 5)
 					while val == prev do
-						val = math.random(1, 4)
+						val = math.random(1, 5)
 					end
 
 					new_gem(val, x, 1)
@@ -364,6 +396,11 @@ function _update(dt)
 							end
 
 							if chain >= 3 then
+								if chain >= 4 then
+									board.data[y][x].gem = 10
+									board.data[y][x].bomb = true
+									board.data[y][x].timer = 3.0
+								end
 								while chain > 0 do
 									board.data[y][x + chain - 1].matched = true
 									chain = chain - 1
@@ -377,6 +414,11 @@ function _update(dt)
 								chain = chain + 1
 							end
 							if chain >= 3 then
+								if chain >= 4 then
+									board.data[y][x].gem = 10
+									board.data[y][x].bomb = true
+									board.data[y][x].timer = 3.0
+								end
 								while chain > 0 do
 									board.data[y + chain - 1][x].matched = true
 									chain = chain - 1
@@ -438,7 +480,7 @@ function _draw()
 		for x = 1, bs+1 do
 			local tx = (x - 1) * 26 + board.x - 26
 			local ty = (y - 1) * 26 + board.y - 26
-			mik.tile(SPR.gems,  5, 8,  12,  tx, ty)
+			mik.tile(SPR.gems,  6, 8,  12,  tx, ty)
 		end
 	end
 	mik.clip()
@@ -468,7 +510,7 @@ function _draw()
 				tile = -1
 			end
 			if tile ~= -1 then
-				mik.tile(SPR.gems,  5, 8,  tile,  tx, ty)
+				mik.tile(SPR.gems,  6, 8,  tile,  tx, ty)
 			end
 		end
 	end
@@ -477,12 +519,24 @@ function _draw()
 	for y = 1, boardSize do
 		for x = 1, boardSize do
 			local b = board_get(x, y)
-			if b ~= 0 then
+			if b ~= 0 and b.gem <= 5 then
 				local idx = (b.gem - 1) * 8 + (b.matched and 1 or 0)
-				mik.tile(SPR.gems,  5, 8,  idx,  b.x + board.x, b.y + board.y)
+				mik.tile(SPR.gems,  6, 8,  idx,  b.x + board.x, b.y + board.y)
+			elseif b ~= 0 and b.gem == 10 then
+				local idx = math.sin(b.timer * 256.0) > 0 and 1 or 0
+				mik.tile(SPR.gems,  6, 8,  18 + idx,  b.x + board.x, b.y + board.y)
 			end
 		end
 	end
+
+	for k, v in pairs(explosions) do
+		mik.tile(SPR.gems,  6, 8,  mik.frame(explodeAnim),  v[1] + board.x, v[2] + board.y)
+	end
+
+	if mik.frame(explodeAnim) >= 31 then
+		explosions = {}
+	end
+
 	mik.clip()
 
 	local sel = selected
@@ -493,7 +547,7 @@ function _draw()
 		if g ~= nil and g ~= 0 then
 			local tx = g.x + board.x
 			local ty = g.y + board.y
-			mik.tile(SPR.gems,  5, 8,  mik.frame(selectorAnim),  tx, ty)
+			mik.tile(SPR.gems,  6, 8,  mik.frame(selectorAnim),  tx, ty)
 		end
 	end
 
@@ -503,7 +557,7 @@ function _draw()
 		for x = 1, 4 do
 			local tx = (x - 1) * 26 + 2
 			local ty = (y - 1) * 26 + 3
-			mik.tile(SPR.gems,  5, 8,  12,  tx, ty)
+			mik.tile(SPR.gems,  6, 8,  12,  tx, ty)
 		end
 	end
 	mik.clip()
@@ -513,17 +567,17 @@ function _draw()
 	mik.text(SPR.font, charMap,
 	"Score\n"..scoreTxt,
 	9, 9)
-	mik.tile(SPR.gems,  5, 8,  2,  2, 3)
-	mik.tile(SPR.gems,  5, 8,  3,  55, 3)
-	mik.tile(SPR.gems,  5, 8,  10,  2, 55)
-	mik.tile(SPR.gems,  5, 8,  11,  55, 55)
+	mik.tile(SPR.gems,  6, 8,  2,  2, 3)
+	mik.tile(SPR.gems,  6, 8,  3,  55, 3)
+	mik.tile(SPR.gems,  6, 8,  10,  2, 55)
+	mik.tile(SPR.gems,  6, 8,  11,  55, 55)
 
-	mik.tile(SPR.gems,  5, 8,  4,  26, 3)
-	mik.tile(SPR.gems,  5, 8,  4,  32, 3)
-	mik.tile(SPR.gems,  5, 8,  5,  26, 55)
-	mik.tile(SPR.gems,  5, 8,  5,  32, 55)
-	mik.tile(SPR.gems,  5, 8,  6,  2, 26)
-	mik.tile(SPR.gems,  5, 8,  6,  2, 32)
-	mik.tile(SPR.gems,  5, 8,  7,  55, 26)
-	mik.tile(SPR.gems,  5, 8,  7,  55, 32)
+	mik.tile(SPR.gems,  6, 8,  4,  26, 3)
+	mik.tile(SPR.gems,  6, 8,  4,  32, 3)
+	mik.tile(SPR.gems,  6, 8,  5,  26, 55)
+	mik.tile(SPR.gems,  6, 8,  5,  32, 55)
+	mik.tile(SPR.gems,  6, 8,  6,  2, 26)
+	mik.tile(SPR.gems,  6, 8,  6,  2, 32)
+	mik.tile(SPR.gems,  6, 8,  7,  55, 26)
+	mik.tile(SPR.gems,  6, 8,  7,  55, 32)
 end
