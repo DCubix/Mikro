@@ -150,8 +150,8 @@ function board_swap(fx, fy, tx, ty)
 end
 
 function _init()
-	SPR.gems = mik.load_sprite("../res/gems.png")
-	SPR.font = mik.load_sprite("../res/font2.png")
+	SPR.gems = mik.load_sprite("../res/gems.png", 6, 8)
+	SPR.font = mik.load_sprite("../res/font2.png", 1, #charMap)
 	SPR.sky = mik.load_sprite("../res/sky.png")
 	SPR.grass = mik.load_sprite("../res/grass.png")
 
@@ -476,7 +476,7 @@ function _draw()
 		for x = 1, bs+1 do
 			local tx = (x - 1) * 26 + board.x - 26
 			local ty = (y - 1) * 26 + board.y - 26
-			mik.tile(SPR.gems,  6, 8,  12,  tx, ty)
+			mik.tile(SPR.gems,  12,  tx, ty)
 		end
 	end
 	mik.clip()
@@ -506,7 +506,7 @@ function _draw()
 				tile = -1
 			end
 			if tile ~= -1 then
-				mik.tile(SPR.gems,  6, 8,  tile,  tx, ty)
+				mik.tile(SPR.gems,  tile,  tx, ty)
 			end
 		end
 	end
@@ -517,16 +517,16 @@ function _draw()
 			local b = board_get(x, y)
 			if b ~= 0 and b.gem <= 5 then
 				local idx = (b.gem - 1) * 8 + (b.matched and 1 or 0)
-				mik.tile(SPR.gems,  6, 8,  idx,  b.x + board.x, b.y + board.y)
+				mik.tile(SPR.gems,  idx,  b.x + board.x, b.y + board.y)
 			elseif b ~= 0 and b.gem == 10 then
 				local idx = math.sin(b.timer * 256.0) > 0 and 1 or 0
-				mik.tile(SPR.gems,  6, 8,  18 + idx,  b.x + board.x, b.y + board.y)
+				mik.tile(SPR.gems,  18 + idx,  b.x + board.x, b.y + board.y)
 			end
 		end
 	end
 
 	for k, v in pairs(explosions) do
-		mik.tile(SPR.gems,  6, 8,  mik.frame(SPR.gems),  v[1] + board.x, v[2] + board.y)
+		mik.tile(SPR.gems,  mik.frame(SPR.gems),  v[1] + board.x, v[2] + board.y)
 	end
 
 	if mik.frame(SPR.gems) >= 31 then
@@ -543,7 +543,7 @@ function _draw()
 		if g ~= nil and g ~= 0 then
 			local tx = g.x + board.x
 			local ty = g.y + board.y
-			mik.tile(SPR.gems,  6, 8,  mik.frame(SPR.gems),  tx, ty)
+			mik.tile(SPR.gems,  mik.frame(SPR.gems),  tx, ty)
 		end
 	end
 
@@ -553,7 +553,7 @@ function _draw()
 		for x = 1, 4 do
 			local tx = (x - 1) * 26 + 2
 			local ty = (y - 1) * 26 + 3
-			mik.tile(SPR.gems,  6, 8,  12,  tx, ty)
+			mik.tile(SPR.gems,  12,  tx, ty)
 		end
 	end
 	mik.clip()
@@ -562,17 +562,17 @@ function _draw()
 
 	mik.text(SPR.font, charMap, "Score\n"..scoreTxt, 9, 9)
 
-	mik.tile(SPR.gems,  6, 8,  2,  2, 3)
-	mik.tile(SPR.gems,  6, 8,  3,  55, 3)
-	mik.tile(SPR.gems,  6, 8,  10,  2, 55)
-	mik.tile(SPR.gems,  6, 8,  11,  55, 55)
+	mik.tile(SPR.gems,  2,  2, 3)
+	mik.tile(SPR.gems,  3,  55, 3)
+	mik.tile(SPR.gems,  10,  2, 55)
+	mik.tile(SPR.gems,  11,  55, 55)
 
-	mik.tile(SPR.gems,  6, 8,  4,  26, 3)
-	mik.tile(SPR.gems,  6, 8,  4,  32, 3)
-	mik.tile(SPR.gems,  6, 8,  5,  26, 55)
-	mik.tile(SPR.gems,  6, 8,  5,  32, 55)
-	mik.tile(SPR.gems,  6, 8,  6,  2, 26)
-	mik.tile(SPR.gems,  6, 8,  6,  2, 32)
-	mik.tile(SPR.gems,  6, 8,  7,  55, 26)
-	mik.tile(SPR.gems,  6, 8,  7,  55, 32)
+	mik.tile(SPR.gems,  4,  26, 3)
+	mik.tile(SPR.gems,  4,  32, 3)
+	mik.tile(SPR.gems,  5,  26, 55)
+	mik.tile(SPR.gems,  5,  32, 55)
+	mik.tile(SPR.gems,  6,  2, 26)
+	mik.tile(SPR.gems,  6,  2, 32)
+	mik.tile(SPR.gems,  7,  55, 26)
+	mik.tile(SPR.gems,  7,  55, 32)
 end

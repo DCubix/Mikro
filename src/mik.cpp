@@ -429,15 +429,23 @@ namespace mik {
 		}
 	}
 
-	void Mik::tile(Sprite* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y, bool flipx, bool flipy) {
+	void Mik::aspr(Sprite* spr, i32 x, i32 y, bool flipx, bool flipy) {
 		if (spr == nullptr) {
 			LogE("Invalid sprite.");
 			return;
 		}
-		i32 sw = std::floor(spr->width() / cols);
-		i32 sh = std::floor(spr->height() / rows);
-		i32 sx = (index % cols) * sw;
-		i32 sy = std::floor(index / cols) * sh;
+		tile(spr, spr->animator().frame(), x, y, flipx, flipy);
+	}
+
+	void Mik::tile(Sprite* spr, u32 index, i32 x, i32 y, bool flipx, bool flipy) {
+		if (spr == nullptr) {
+			LogE("Invalid sprite.");
+			return;
+		}
+		i32 sw = std::floor(spr->width() / spr->cols());
+		i32 sh = std::floor(spr->height() / spr->rows());
+		i32 sx = (index % spr->cols()) * sw;
+		i32 sy = std::floor(index / spr->cols()) * sh;
 		this->spr(spr, x, y, sx, sy, sw, sh, flipx, flipy);
 	}
 
@@ -446,11 +454,10 @@ namespace mik {
 			LogE("Invalid font.");
 			return -1;
 		}
-		const bool vertical = fnt->height() > fnt->width();
-		i32 cw = !vertical ? std::floor(fnt->width() / charMap.size()) : fnt->width();
+		i32 cw = std::floor(fnt->width() / fnt->cols());
 
 		u32 index = charMap.find_first_of(c);
-		tile(fnt, vertical ? charMap.size() : 1, vertical ? 1 : charMap.size(), index, x, y);
+		tile(fnt, index, x, y);
 
 		return x + cw;
 	}
@@ -460,10 +467,9 @@ namespace mik {
 			LogE("Invalid font.");
 			return;
 		}
-		const bool vertical = fnt->height() > fnt->width();
 		i32 tx = x;
 		i32 ty = y;
-		i32 ch = !vertical ? fnt->height() : std::floor(fnt->height() / charMap.size());
+		i32 ch = std::floor(fnt->height() / fnt->rows());
 
 		for (size_t i = 0; i < text.size(); i++) {
 			char c = text.at(i);
@@ -476,12 +482,14 @@ namespace mik {
 		}
 	}
 
-	Sprite* Mik::loadSprite(std::string const& fileName) {
+	Sprite* Mik::loadSprite(std::string const& fileName, u32 rows, u32 cols) {
 		if (fileName.empty()) {
 			LogE("Invalid file name.");
 			return nullptr;
 		}
 		m_sprites.push_back(std::make_unique<Sprite>(fileName));
+		m_sprites.back().get()->rows(rows);
+		m_sprites.back().get()->cols(cols);
 		return m_sprites.back().get();
 	}
 

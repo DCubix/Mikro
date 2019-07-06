@@ -122,9 +122,15 @@ namespace mik {
 			bool flipx = false, bool flipy = false
 		);
 
+		/// Draws an animated sprite
+		void aspr(
+			Sprite* spr, i32 x, i32 y,
+			bool flipx = false, bool flipy = false
+		);
+
 		/// Draws a tile
 		void tile(
-			Sprite* spr, u32 rows, u32 cols, u32 index, i32 x, i32 y,
+			Sprite* spr, u32 index, i32 x, i32 y,
 			bool flipx = false, bool flipy = false
 		);
 
@@ -135,7 +141,7 @@ namespace mik {
 		void text(Sprite* fnt, std::string const& charMap, std::string const& text, i32 x, i32 y);
 
 		/// Loads a sprite (Sprite)
-		Sprite* loadSprite(std::string const& fileName);
+		Sprite* loadSprite(std::string const& fileName, u32 rows = 1, u32 cols = 1);
 
 		// Creates a sprite (Sprite)
 		Sprite* createSprite(u32 w, u32 h);

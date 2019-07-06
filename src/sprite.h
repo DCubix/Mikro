@@ -38,8 +38,15 @@ namespace mik {
 
 			Animator& animator() { return m_animator; }
 
+			u32 rows() const { return m_rows; }
+			void rows(u32 v) { m_rows = v; }
+
+			u32 cols() const { return m_cols; }
+			void cols(u32 v) { m_cols = v; }
+
 		private:
 			Animator m_animator{};
+			u32 m_rows{ 1 }, m_cols{ 1 };
 
 			u32 m_width, m_height;
 			std::vector<Color> m_data;

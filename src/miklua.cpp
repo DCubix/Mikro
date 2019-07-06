@@ -212,21 +212,33 @@ namespace mik {
 		return 0;
 	}
 
+	MIK_LUA(aspr) {
+		Sprite* bmp = (Sprite*) luaL_checklightuserdata(L, 1);
+		i32 x = i32(luaL_checknumber(L, 2));
+		i32 y = i32(luaL_checknumber(L, 3));
+		bool flipx = false, flipy = false;
+		if (lua_gettop(L) >= 4) {
+			flipx = luaL_checkboolean(L, 4);
+		} else if (lua_gettop(L) == 5) {
+			flipy = luaL_checkboolean(L, 5);
+		}
+		MIK->aspr(bmp, x, y, flipx, flipy);
+		return 0;
+	}
+
 	MIK_LUA(tile) {
 		Sprite* bmp = (Sprite*) luaL_checklightuserdata(L, 1);
-		i32 rows = i32(luaL_checknumber(L, 2));
-		i32 cols = i32(luaL_checknumber(L, 3));
-		i32 index = i32(luaL_checknumber(L, 4));
-		i32 x = i32(luaL_checknumber(L, 5));
-		i32 y = i32(luaL_checknumber(L, 6));
+		i32 index = i32(luaL_checknumber(L, 2));
+		i32 x = i32(luaL_checknumber(L, 3));
+		i32 y = i32(luaL_checknumber(L, 4));
 		bool flipx = false, flipy = false;
-		if (lua_gettop(L) >= 7) {
-			flipx = luaL_checkboolean(L, 7);
+		if (lua_gettop(L) >= 5) {
+			flipx = luaL_checkboolean(L, 5);
 		}
-		if (lua_gettop(L) == 8) {
-			flipy = luaL_checkboolean(L, 8);
+		if (lua_gettop(L) == 6) {
+			flipy = luaL_checkboolean(L, 6);
 		}
-		MIK->tile(bmp, rows, cols, index, x, y, flipx, flipy);
+		MIK->tile(bmp, index, x, y, flipx, flipy);
 		return 0;
 	}
 
@@ -256,7 +268,12 @@ namespace mik {
 
 	MIK_LUA(load_sprite) {
 		const char* fname = luaL_checkstring(L, 1);
-		Sprite* bmp = MIK->loadSprite(std::string(fname));
+		i32 rows = 1, cols = 1;
+		if (lua_gettop(L) == 3) {
+			rows = luaL_checkinteger(L, 2);
+			cols = luaL_checkinteger(L, 3);
+		}
+		Sprite* bmp = MIK->loadSprite(std::string(fname), rows, cols);
 		lua_pushlightuserdata(L, bmp);
 		return 1;
 	}
@@ -461,6 +478,7 @@ namespace mik {
 		MIK_ENTRY(circ),
 		MIK_ENTRY(circf),
 		MIK_ENTRY(spr),
+		MIK_ENTRY(aspr),
 		MIK_ENTRY(tile),
 		MIK_ENTRY(chr),
 		MIK_ENTRY(text),

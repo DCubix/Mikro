@@ -12,12 +12,11 @@ letters = {}
 t = 0
 
 function _init()
-	ninja = mik.load_sprite("../res/ninja.png")
-	font = mik.load_sprite("../res/font.png")
+	ninja = mik.load_sprite("../res/ninja.png", 7, 4)
+	font = mik.load_sprite("../res/font.png", 1, #charMap)
 
-	anim = mik.create_animator()
-	mik.add_animation(anim, "test", { 0, 4, 8, 12 })
-	mik.play(anim, "test", 0.1, true)
+	mik.add_animation(ninja, "test", { 0, 4, 8, 12 })
+	mik.play(ninja, "test", 0.1, true)
 
 	math.randomseed(os.time())
 end
@@ -66,7 +65,7 @@ end
 
 function _draw()
 	mik.clear()
-	mik.tile(ninja, 7, 4,  mik.frame(anim),  160, 120)
+	mik.tile(ninja,  mik.frame(ninja),  160, 120)
 
 	for i = 1, #letters do
 		local lt = letters[i]
