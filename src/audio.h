@@ -13,10 +13,13 @@
 #include <array>
 #include <vector>
 #include <string>
+#include <tuple>
 
 namespace mik {
 	constexpr u32 MikAudioVoices = 16;
 	constexpr u32 MikAudioFreq = 44100;
+
+	using Sample = std::tuple<f32, f32>;
 
 	class Sound {
 	public:
@@ -43,6 +46,9 @@ namespace mik {
 		f32 gain;
 		f32 pitch;
 		f32 pan;
+
+		Sample sample(f32 step);
+		bool ended() const { return sound != nullptr && u32(position) >= sound->data().size(); }
 	};
 
 	struct Music {
@@ -50,6 +56,9 @@ namespace mik {
 		f32 position;
 		f32 gain;
 		f32 pan;
+
+		Sample sample(f32 step);
+		bool ended() const { return sound != nullptr && u32(position) >= sound->data().size(); }
 	};
 
 	class MikAudio {

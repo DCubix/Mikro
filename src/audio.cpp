@@ -13,7 +13,7 @@ namespace mik {
 
 		m_frequency = wav->sampleRate;
 		m_data.resize(wav->totalPCMFrameCount);
-		drwav_read_f32(wav, wav->totalPCMFrameCount, m_data.data());
+		drwav_read_pcm_frames_f32(wav, wav->totalPCMFrameCount, m_data.data());
 		drwav_close(wav);
 	}
 
@@ -85,35 +85,29 @@ namespace mik {
 			for (u32 i = 0; i < MikAudioVoices; i++) {
 				Voice& voc = m_voices[i];
 				if (voc.state == Voice::Playing) {
-					u32 pos = u32(voc.position);
-					if (pos < voc.sound->data().size()) {
-						f32 sample = std::clamp(voc.sound->data()[pos] * voc.gain, -1.0f, 1.0f);
-						left += std::clamp(sample * (0.5f - voc.pan), -1.0f, 1.0f);
-						right += std::clamp(sample * (0.5f + voc.pan), -1.0f, 1.0f);
-						voc.position += f32(voc.sound->frequency()) * advance * voc.pitch;
+					if (!voc.ended()) {
+						auto [l, r] = voc.sample(advance);
+						left += l;
+						right += r;
 					} else resetVoice(i);
 				}
 			}
 
 			f32 fade = m_fade <= 0.0f ? 1.0f : m_fadeTime / m_fade;
-			u32 pos = 0;
 
 			if (m_currMusic.sound != nullptr) {
-				pos = u32(m_currMusic.position) % m_currMusic.sound->data().size();
-
 				// Mix music
 				switch (m_musicState) {
 					case MPlaying: {
-						f32 preFade = m_fade / m_frequency;
-						f32 sample = std::clamp(m_currMusic.sound->data()[pos] * m_currMusic.gain * fade, -1.0f, 1.0f);
-						left += std::clamp(sample * (0.5f - m_currMusic.pan), -1.0f, 1.0f);
-						right += std::clamp(sample * (0.5f + m_currMusic.pan), -1.0f, 1.0f);
+						auto [l, r] = m_currMusic.sample(advance);
+						left += l * fade;
+						right += r * fade;
 					} break;
 					case MFadingOut: {
 						if (fade < 1.0f) {
-							f32 sample = std::clamp(m_currMusic.sound->data()[pos] * m_currMusic.gain * (1.0f - fade), -1.0f, 1.0f);
-							left += std::clamp(sample * (0.5f - m_currMusic.pan), -1.0f, 1.0f);
-							right += std::clamp(sample * (0.5f + m_currMusic.pan), -1.0f, 1.0f);
+							auto [l, r] = m_currMusic.sample(advance);
+							left += l * (1.0f - fade);
+							right += r * (1.0f - fade);
 						} else {
 							m_musicState = MStopped;
 							m_currMusic.sound = nullptr;
@@ -121,8 +115,6 @@ namespace mik {
 					} break;
 					default: break;
 				}
-				if (m_currMusic.sound != nullptr)
-					m_currMusic.position += f32(m_currMusic.sound->frequency()) * advance;
 			}
 
 			// Fading/Switching
@@ -168,4 +160,22 @@ namespace mik {
 		}
 		return voice;
 	}
+
+	Sample Voice::sample(f32 step) {
+		f32 sample = std::clamp(sound->data()[u32(position)] * gain, -1.0f, 1.0f);
+		f32 left = std::clamp(sample * (0.5f - pan), -1.0f, 1.0f);
+		f32 right = std::clamp(sample * (0.5f + pan), -1.0f, 1.0f);
+		position += f32(sound->frequency()) * step * pitch;
+		return std::make_tuple(left, right);
+	}
+
+	Sample Music::sample(f32 step) {
+		f32 sample = std::clamp(sound->data()[u32(position)] * gain, -1.0f, 1.0f);
+		f32 left = std::clamp(sample * (0.5f - pan), -1.0f, 1.0f);
+		f32 right = std::clamp(sample * (0.5f + pan), -1.0f, 1.0f);
+		position += f32(sound->frequency()) * step;
+		position = f32(u32(position) % sound->data().size());
+		return std::make_tuple(left, right);
+	}
+
 }
