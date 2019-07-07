@@ -2,6 +2,7 @@
 .exe
 .vscode
 build
+doctrees
 *.exe
 [Dd]ebug
 [Rr]elease

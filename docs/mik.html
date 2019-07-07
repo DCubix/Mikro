@@ -1,0 +1,791 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Mikro’s Lua API &#8212; mik  documentation</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Getting Started" href="start.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="start.html" title="Getting Started"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mik  documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="mikro-s-lua-api">
+<span id="api"></span><h1>Mikro’s Lua API<a class="headerlink" href="#mikro-s-lua-api" title="Permalink to this headline">¶</a></h1>
+<p>The <cite>mik</cite> module wraps every functionality
+from Mikro’s C++ API to the Lua language.</p>
+<p>Make sure you’ve read the <a class="reference internal" href="start.html#gettingstarted"><span class="std std-ref">Getting Started</span></a> guide.</p>
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.quit():</code></dt>
+<dd><p>Quits the game.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.btnp(name):</code></dt>
+<dd><p>Returns true when a button has been pressed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>string</em>) – The button name. <a class="reference internal" href="#buttons"><span class="std std-ref">Button Constants</span></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.btnr(name):</code></dt>
+<dd><p>Returns true when a button has been released.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>string</em>) – The button name. <a class="reference internal" href="#buttons"><span class="std std-ref">Button Constants</span></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.btnh(name):</code></dt>
+<dd><p>Returns true when a button has been held.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>name</strong> (<em>string</em>) – The button name. <a class="reference internal" href="#buttons"><span class="std std-ref">Button Constants</span></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.warp(x, y):</code></dt>
+<dd><p>Warps the mouse to a specific location.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>number</em>) – X coordinate.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y coordinate.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.mousex():</code></dt>
+<dd><p>Gets the current mouse’s X coordinate.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.mousey():</code></dt>
+<dd><p>Gets the current mouse’s Y coordinate.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.title([text]):</code></dt>
+<dd><p>Gets/Sets the window title.
+If no argument is specified, it acts as a getter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>text</strong> (<em>string</em>) – The text to set the window title to (optional).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>string</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The window title.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.key(r, g, b):</code></dt>
+<dd><p>Sets the transparency key color.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.clip([x, y, w, h]):</code></dt>
+<dd><p>Sets/Unsets the clipping region of the next drawing commands.
+If no argument is passed, or if any of the width and height components is zero,
+clipping will be disabled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>w</strong> (<em>number</em>) – Width component.</p></li>
+<li><p><strong>h</strong> (<em>number</em>) – Height component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.clear([r, g, b]):</code></dt>
+<dd><p>Clears the screen to an optional background color.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.dot(x, y, r, g, b):</code></dt>
+<dd><p>Draws a <cite>dot</cite> (pixel) at a specified <cite>position</cite> (x, y) with a specified <cite>color</cite> (r, g, b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>number</em>) – X position component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y position component.</p></li>
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.line(x1, y1, x2, y2, r, g, b):</code></dt>
+<dd><p>Draws a <cite>line</cite> between two point with a specified <cite>color</cite> (r, g, b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x1</strong> (<em>number</em>) – Start X position component.</p></li>
+<li><p><strong>y1</strong> (<em>number</em>) – Start Y position component.</p></li>
+<li><p><strong>x2</strong> (<em>number</em>) – End X position component.</p></li>
+<li><p><strong>y2</strong> (<em>number</em>) – End Y position component.</p></li>
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.rect(x, y, w, h, r, g, b):</code></dt>
+<dd><p>Draws a <cite>rectangle</cite> with a specified <cite>color</cite> (r, g, b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>w</strong> (<em>number</em>) – Width component.</p></li>
+<li><p><strong>h</strong> (<em>number</em>) – Height component.</p></li>
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.rectf(x, y, w, h, r, g, b):</code></dt>
+<dd><p>Draws a <cite>filled rectangle</cite> with a specified <cite>color</cite> (r, g, b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>w</strong> (<em>number</em>) – Width component.</p></li>
+<li><p><strong>h</strong> (<em>number</em>) – Height component.</p></li>
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.circ(x, y, radius, r, g, b):</code></dt>
+<dd><p>Draws a <cite>circle</cite> with a specified <cite>color</cite> (r, g, b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>radius</strong> (<em>number</em>) – Radius.</p></li>
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.circf(x, y, radius, r, g, b):</code></dt>
+<dd><p>Draws a <cite>filled circle</cite> with a specified <cite>color</cite> (r, g, b).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>radius</strong> (<em>number</em>) – Radius.</p></li>
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.spr(sprite, x, y, [sx, sy, sw, sh, flipx, flipy]):</code></dt>
+<dd><p>Draws a <cite>sprite</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p></li>
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>sx</strong> (<em>number</em>) – Source rect X component (optional).</p></li>
+<li><p><strong>sy</strong> (<em>number</em>) – Source rect Y component (optional).</p></li>
+<li><p><strong>sw</strong> (<em>number</em>) – Source rect Width component (optional).</p></li>
+<li><p><strong>sh</strong> (<em>number</em>) – Source rect Height component (optional).</p></li>
+<li><p><strong>flipx</strong> (<em>bool</em>) – If true, flips the sprite horizontally (optional).</p></li>
+<li><p><strong>flipy</strong> (<em>bool</em>) – If true, flips the sprite vertically (optional).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.aspr(sprite, x, y, [flipx, flipy]):</code></dt>
+<dd><p>Draws an <cite>animated sprite</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p></li>
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>flipx</strong> (<em>bool</em>) – If true, flips the sprite horizontally (optional).</p></li>
+<li><p><strong>flipy</strong> (<em>bool</em>) – If true, flips the sprite vertically (optional).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.tile(sprite, index, x, y, [flipx, flipy]):</code></dt>
+<dd><p>Draws a <cite>sprite tile</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p></li>
+<li><p><strong>index</strong> (<em>number</em>) – Tile index.</p></li>
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>flipx</strong> (<em>bool</em>) – If true, flips the sprite horizontally (optional).</p></li>
+<li><p><strong>flipy</strong> (<em>bool</em>) – If true, flips the sprite vertically (optional).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.chr(font, map, char, x, y):</code></dt>
+<dd><p>Draws a single <cite>character</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>font</strong> (<em>Sprite object</em>) – Font sprite.</p></li>
+<li><p><strong>map</strong> (<em>string</em>) – Character map string.</p></li>
+<li><p><strong>char</strong> (<em>string</em>) – Character to draw.</p></li>
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.text(font, map, text, x, y):</code></dt>
+<dd><p>Draws a <cite>string</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>font</strong> (<em>Sprite object</em>) – Font sprite.</p></li>
+<li><p><strong>map</strong> (<em>string</em>) – Character map string.</p></li>
+<li><p><strong>text</strong> (<em>string</em>) – Text.</p></li>
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.load_sprite(fileName, [rows, cols]):</code></dt>
+<dd><p>Loads a <cite>sprite</cite> from a PNG image file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fileName</strong> (<em>string</em>) – PNG image file name.</p></li>
+<li><p><strong>rows</strong> (<em>int</em>) – Number of vertical sprites in the sprite sheet (optional).</p></li>
+<li><p><strong>cols</strong> (<em>int</em>) – Number of horizontal sprites in the sprite sheet (optional).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Sprite object</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A sprite.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.create_sprite(w, h):</code></dt>
+<dd><p>Creates an empty <cite>sprite</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>w</strong> (<em>number</em>) – Sprite width.</p></li>
+<li><p><strong>h</strong> (<em>number</em>) – Sprite height.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Sprite object</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A sprite.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.width([sprite]):</code></dt>
+<dd><p>Gets the width of a <cite>sprite</cite> or the width of the <cite>screen</cite> if no parameter is specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.height([sprite]):</code></dt>
+<dd><p>Gets the height of a <cite>sprite</cite> or the height of the <cite>screen</cite> if no parameter is specified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.pget(sprite, x, y):</code></dt>
+<dd><p>Gets a pixel at a certain position from a <cite>sprite</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p></li>
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>table {r, g, b}</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The pixel color.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.pset(sprite, x, y, r, g, b, [ghost]):</code></dt>
+<dd><p>Sets a pixel at a certain position in a <cite>sprite</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p></li>
+<li><p><strong>x</strong> (<em>number</em>) – X component.</p></li>
+<li><p><strong>y</strong> (<em>number</em>) – Y component.</p></li>
+<li><p><strong>r</strong> (<em>number</em>) – Red component.</p></li>
+<li><p><strong>g</strong> (<em>number</em>) – Green component.</p></li>
+<li><p><strong>b</strong> (<em>number</em>) – Blue component.</p></li>
+<li><p><strong>ghost</strong> (<em>bool</em>) – If true, the pixel will be marked as a “ghost pixel”,
+in other words, it will be ignored by the renderer, making it “transparent”.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.frame(sprite):</code></dt>
+<dd><p>Gets the current frame from a sprite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.animation(sprite):</code></dt>
+<dd><p>Gets the current animation name from a sprite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.play(sprite, name, speed, loop):</code></dt>
+<dd><p>Plays a sprite animation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Animation name.</p></li>
+<li><p><strong>speed</strong> (<em>number</em>) – Animation speed in seconds.</p></li>
+<li><p><strong>loop</strong> (<em>bool</em>) – Whether or not the animation should loop.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.add_animation(sprite, name, [frames]):</code></dt>
+<dd><p>Adds an animation to a sprite.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sprite</strong> (<em>Sprite object</em>) – A sprite.</p></li>
+<li><p><strong>name</strong> (<em>string</em>) – Animation name.</p></li>
+<li><p><strong>frames</strong> (<em>string</em>) – Animation frames array (optional).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.load_sound(fileName):</code></dt>
+<dd><p>Loads a <cite>sound</cite> from a WAV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fileName</strong> (<em>string</em>) – WAV file name.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Sound object</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A sound.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.play_sound(sound, [gain, pitch, pan]):</code></dt>
+<dd><p>Plays a <cite>sound</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sound</strong> (<em>Sound object</em>) – A sound.</p></li>
+<li><p><strong>gain</strong> (<em>number</em>) – The initial gain (volume) (optional).</p></li>
+<li><p><strong>pitch</strong> (<em>number</em>) – The initial pitch (optional).</p></li>
+<li><p><strong>pan</strong> (<em>number</em>) – The initial pan (optional).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Voice object</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The voice this sound is going to be played in.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.play_music(sound, [gain, pan, fade]):</code></dt>
+<dd><p>Plays a <cite>music</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sound</strong> (<em>Sound object</em>) – A sound.</p></li>
+<li><p><strong>gain</strong> (<em>number</em>) – The initial gain (volume) (optional).</p></li>
+<li><p><strong>pan</strong> (<em>number</em>) – The initial pan (optional).</p></li>
+<li><p><strong>fade</strong> (<em>number</em>) – Fade time in seconds (optional).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.stop_music([fade]):</code></dt>
+<dd><p>Stops the current <cite>music</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>fade</strong> (<em>number</em>) – Fade time in seconds (optional).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.volume(voice, [value]):</code></dt>
+<dd><p>Gets/Sets the voice’s volume/gain.
+If no <cite>value</cite> argument is passed, it will act as a getter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voice</strong> (<em>Voice object</em>) – A voice from <strong>mik.play_sound</strong>.</p></li>
+<li><p><strong>value</strong> (<em>number</em>) – The volume/gain value [0.0 - 1.0].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.master_volume([value]):</code></dt>
+<dd><p>Gets/Sets the master volume/gain.
+If no <cite>value</cite> argument is passed, it will act as a getter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>number</em>) – The volume/gain value [0.0 - 1.0].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.pitch(voice, [value]):</code></dt>
+<dd><p>Gets/Sets the voice’s pitch.
+If no <cite>value</cite> argument is passed, it will act as a getter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voice</strong> (<em>Voice object</em>) – A voice from <strong>mik.play_sound</strong>.</p></li>
+<li><p><strong>value</strong> (<em>number</em>) – The pitch value [0.1 - 10.0].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">mik.pan(voice, [value]):</code></dt>
+<dd><p>Gets/Sets the voice’s pan.
+If no <cite>value</cite> argument is passed, it will act as a getter.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>voice</strong> (<em>Voice object</em>) – A voice from <strong>mik.play_sound</strong>.</p></li>
+<li><p><strong>value</strong> (<em>number</em>) – The pan value [-1.0 - 1.0].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="math-library-extensions">
+<span id="exts"></span><h2>Math Library Extensions<a class="headerlink" href="#math-library-extensions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt>
+<code class="sig-name descname">math.lerp(a, b, t):</code></dt>
+<dd><p>Linear interpolation.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="sig-name descname">math.clamp(v, min, max):</code></dt>
+<dd><p>Value clamping.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="button-constants">
+<span id="buttons"></span><h2>Button Constants<a class="headerlink" href="#button-constants" title="Permalink to this headline">¶</a></h2>
+<dl class="data">
+<dt id="left">
+<code class="sig-name descname">left</code><a class="headerlink" href="#left" title="Permalink to this definition">¶</a></dt>
+<dd><p>Left button. Mapped to <strong>Left Arrow Key</strong> and <strong>S Key</strong>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="right">
+<code class="sig-name descname">right</code><a class="headerlink" href="#right" title="Permalink to this definition">¶</a></dt>
+<dd><p>Right button. Mapped to <strong>Right Arrow Key</strong> and <strong>F Key</strong>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="up">
+<code class="sig-name descname">up</code><a class="headerlink" href="#up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Up button. Mapped to <strong>Up Arrow Key</strong> and <strong>E Key</strong>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="down">
+<code class="sig-name descname">down</code><a class="headerlink" href="#down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Down button. Mapped to <strong>Down Arrow Key</strong> and <strong>D Key</strong>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="a">
+<code class="sig-name descname">a</code><a class="headerlink" href="#a" title="Permalink to this definition">¶</a></dt>
+<dd><p>A button. Mapped to <strong>Z Key</strong> and <strong>K Key</strong>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="b">
+<code class="sig-name descname">b</code><a class="headerlink" href="#b" title="Permalink to this definition">¶</a></dt>
+<dd><p>B button. Mapped to <strong>X Key</strong> and <strong>L Key</strong>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="start">
+<code class="sig-name descname">start</code><a class="headerlink" href="#start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start button. Mapped to <strong>Enter Key</strong> and <strong>Numpad Enter Key</strong>.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="left_mouse">
+<code class="sig-name descname">left_mouse</code><a class="headerlink" href="#left_mouse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Left mouse button.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="middle_mouse">
+<code class="sig-name descname">middle_mouse</code><a class="headerlink" href="#middle_mouse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Middle mouse button.</p>
+</dd></dl>
+
+<dl class="data">
+<dt id="right_mouse">
+<code class="sig-name descname">right_mouse</code><a class="headerlink" href="#right_mouse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Right mouse button.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Mikro’s Lua API</a><ul>
+<li><a class="reference internal" href="#math-library-extensions">Math Library Extensions</a></li>
+<li><a class="reference internal" href="#button-constants">Button Constants</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="start.html"
+                        title="previous chapter">Getting Started</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/mik.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="start.html" title="Getting Started"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">mik  documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2019, Diego Lopes.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.1.2.
+    </div>
+  </body>
+</html>
