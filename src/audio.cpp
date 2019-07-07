@@ -5,16 +5,17 @@
 
 namespace mik {
 	Sound::Sound(std::string const& fileName) {
-		drwav* wav = drwav_open_file(fileName.c_str());
-		if (wav == nullptr) {
+		drwav wav;
+		if (!drwav_init_file(&wav, fileName.c_str())) {
 			LogE("Invalid WAV file: \"", fileName, "\"");
 			return;
 		}
 
-		m_frequency = wav->sampleRate;
-		m_data.resize(wav->totalPCMFrameCount);
-		drwav_read_pcm_frames_f32(wav, wav->totalPCMFrameCount, m_data.data());
-		drwav_close(wav);
+		m_frequency = wav.sampleRate;
+		m_data.resize(wav.totalPCMFrameCount * wav.channels);
+		drwav_read_pcm_frames_f32(&wav, wav.totalPCMFrameCount, m_data.data());
+
+		drwav_uninit(&wav);
 	}
 
 	MikAudio::MikAudio() {

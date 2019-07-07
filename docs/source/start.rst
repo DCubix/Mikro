@@ -10,6 +10,8 @@ It uses Lua scripting for the games and it's implemented in C++ for that `full s
 It supports some basic shapes, sprites, animations, simple sounds and music, and everything is
 limited to a 320x240 screen, upscaled to a 640x480 window.
 
+You can get Mikro `here <https://github.com/DCubix/Mikro>`__.
+
 For you to run any game, just drag your Lua script to the executable and done.
 Here's a simple "Hello World program":
 
