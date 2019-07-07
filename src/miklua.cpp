@@ -409,6 +409,35 @@ namespace mik {
 		return 0;
 	}
 
+	MIK_LUA(play_music) {
+		Sound* snd = (Sound*) luaL_checklightuserdata(L, 1);
+		int args = lua_gettop(L);
+		f32 gain = 1.0f;
+		f32 pan = 1.0f;
+		f32 fade = 0.0f;
+		if (args >= 2) {
+			gain = luaL_checknumber(L, 2);
+		}
+		if (args >= 3) {
+			pan = luaL_checknumber(L, 3);
+		}
+		if (args >= 4) {
+			fade = luaL_checknumber(L, 4);
+		}
+		MIK->audio()->playMusic(snd, gain, pan, fade);
+		return 0;
+	}
+
+	MIK_LUA(stop_music) {
+		int args = lua_gettop(L);
+		f32 fade = 0.0f;
+		if (args == 1) {
+			fade = luaL_checknumber(L, 1);
+		}
+		MIK->audio()->stopMusic(fade);
+		return 0;
+	}
+
 	MIK_LUA(volume) {
 		Voice* voc = (Voice*) luaL_checklightuserdata(L, 1);
 		if (lua_gettop(L) == 2) {
@@ -416,6 +445,17 @@ namespace mik {
 			return 0;
 		} else {
 			lua_pushnumber(L, voc->gain);
+			return 1;
+		}
+	}
+
+	MIK_LUA(master_volume) {
+		Voice* voc = (Voice*) luaL_checklightuserdata(L, 1);
+		if (lua_gettop(L) == 1) {
+			MIK->audio()->gain(luaL_checknumber(L, 2));
+			return 0;
+		} else {
+			lua_pushnumber(L, MIK->audio()->gain());
 			return 1;
 		}
 	}
@@ -438,7 +478,7 @@ namespace mik {
 			return 0;
 		} else {
 			lua_pushnumber(L, voc->pan);
-			return 0;
+			return 1;
 		}
 	}
 
@@ -496,8 +536,11 @@ namespace mik {
 		MIK_ENTRY(play_sound),
 		MIK_ENTRY(stop_sound),
 		MIK_ENTRY(volume),
+		MIK_ENTRY(master_volume),
 		MIK_ENTRY(pitch),
 		MIK_ENTRY(pan),
+		MIK_ENTRY(play_music),
+		MIK_ENTRY(stop_music),
 		{ nullptr, nullptr }
 	};
 

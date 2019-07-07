@@ -45,6 +45,13 @@ namespace mik {
 		f32 pan;
 	};
 
+	struct Music {
+		Sound *sound{ nullptr };
+		f32 position;
+		f32 gain;
+		f32 pan;
+	};
+
 	class MikAudio {
 	public:
 		MikAudio();
@@ -53,9 +60,23 @@ namespace mik {
 		Voice* play(Sound* sound, f32 gain = 1.0f, f32 pitch = 1.0f, f32 pan = 0.0f);
 		void stop(Sound* sound);
 
+		void playMusic(Sound* sound, f32 gain = 1.0f, f32 pan = 0.0f, f32 fade = 0.0f);
+		void stopMusic(f32 fade = 0.0f);
+
 		void mix(f32* out, u32 samples);
 
+		f32 gain() const { return m_gain; }
+		void gain(f32 v) { m_gain = v; }
+
 	private:
+		enum {
+			MStopped = 0,
+			MPlaying,
+			MFadingOut
+		} m_musicState{ MStopped };
+		Music m_currMusic, m_nextMusic;
+		f32 m_fadeTime{ 0.0f }, m_fade{ 0.0f };
+
 		std::array<Voice, MikAudioVoices> m_voices;
 		u32 m_frequency{ MikAudioFreq };
 		f32 m_gain{ 1.0f };

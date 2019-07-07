@@ -48,6 +48,35 @@ namespace mik {
 		}
 	}
 
+	void MikAudio::playMusic(Sound* sound, f32 gain, f32 pan, f32 fade) {
+		if (sound == nullptr) {
+			LogE("Invalid music.");
+			return;
+		}
+		m_fadeTime = 0.0f;
+		m_fade = fade;
+		if (m_currMusic.sound == nullptr) {
+			m_currMusic.gain = gain;
+			m_currMusic.pan = pan;
+			m_currMusic.position = 0.0f;
+			m_currMusic.sound = sound;
+			m_musicState = MPlaying;
+		} else {
+			m_nextMusic.gain = gain;
+			m_nextMusic.pan = pan;
+			m_nextMusic.position = 0.0f;
+			m_nextMusic.sound = sound;
+			m_musicState = MFadingOut;
+		}
+	}
+
+	void MikAudio::stopMusic(f32 fade) {
+		if (m_currMusic.sound == nullptr) return;
+		m_fadeTime = 0.0f;
+		m_fade = fade;
+		m_musicState = MFadingOut;
+	}
+
 	void MikAudio::mix(f32* out, u32 samples) {
 		const f32 advance = 1.0f / m_frequency;
 		f32 left = 0.0f, right = 0.0f;
@@ -65,8 +94,55 @@ namespace mik {
 					} else resetVoice(i);
 				}
 			}
-			left = std::clamp(left, -1.0f, 1.0f);
-			right = std::clamp(right, -1.0f, 1.0f);
+
+			f32 fade = m_fade <= 0.0f ? 1.0f : m_fadeTime / m_fade;
+			u32 pos = 0;
+
+			if (m_currMusic.sound != nullptr) {
+				pos = u32(m_currMusic.position) % m_currMusic.sound->data().size();
+
+				// Mix music
+				switch (m_musicState) {
+					case MPlaying: {
+						f32 preFade = m_fade / m_frequency;
+						f32 sample = std::clamp(m_currMusic.sound->data()[pos] * m_currMusic.gain * fade, -1.0f, 1.0f);
+						left += std::clamp(sample * (0.5f - m_currMusic.pan), -1.0f, 1.0f);
+						right += std::clamp(sample * (0.5f + m_currMusic.pan), -1.0f, 1.0f);
+					} break;
+					case MFadingOut: {
+						if (fade < 1.0f) {
+							f32 sample = std::clamp(m_currMusic.sound->data()[pos] * m_currMusic.gain * (1.0f - fade), -1.0f, 1.0f);
+							left += std::clamp(sample * (0.5f - m_currMusic.pan), -1.0f, 1.0f);
+							right += std::clamp(sample * (0.5f + m_currMusic.pan), -1.0f, 1.0f);
+						} else {
+							m_musicState = MStopped;
+							m_currMusic.sound = nullptr;
+						}
+					} break;
+					default: break;
+				}
+				if (m_currMusic.sound != nullptr)
+					m_currMusic.position += f32(m_currMusic.sound->frequency()) * advance;
+			}
+
+			// Fading/Switching
+			if (m_nextMusic.sound != nullptr) {
+				if (fade >= 1.0f) {
+					m_currMusic.gain = m_nextMusic.gain;
+					m_currMusic.pan = m_nextMusic.pan;
+					m_currMusic.position = 0.0f;
+					m_currMusic.sound = m_nextMusic.sound;
+					m_nextMusic.sound = nullptr;
+					m_musicState = MPlaying;
+					m_fadeTime = 0.0f;
+				}
+			}
+
+			if (m_fadeTime < m_fade)
+				m_fadeTime += advance;
+
+			left = std::clamp(left * m_gain, -1.0f, 1.0f);
+			right = std::clamp(right * m_gain, -1.0f, 1.0f);
 			*out++ = left;
 			*out++ = right;
 		}

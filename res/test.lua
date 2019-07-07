@@ -3,6 +3,10 @@ ninja = nil
 font = nil
 anim = nil
 
+music1 = nil
+music2 = nil
+state = true
+
 ctx = 0
 cty = 0
 
@@ -15,14 +19,25 @@ function _init()
 	ninja = mik.load_sprite("../res/ninja.png", 7, 4)
 	font = mik.load_sprite("../res/font.png", 1, #charMap)
 
+	music1 = mik.load_sound("../res/music1.wav")
+	music2 = mik.load_sound("../res/music2.wav")
+
 	mik.add_animation(ninja, "test", { 0, 4, 8, 12 })
 	mik.play(ninja, "test", 0.1, true)
 
+	mik.play_music(music1, 1.0, 0.0, 1.0)
 	math.randomseed(os.time())
 end
 
 function _update(dt)
 	t = t + dt * 2.0
+
+	if mik.btnp("up") then
+		mik.play_music(state and music2 or music1, 1.0, 0.0, 1.0)
+		state = not state
+	elseif mik.btnp("down") then
+		mik.stop_music(1.0)
+	end
 
 	local angle = 0.0
 	local step = (math.pi * 2.0) / (#txt)
