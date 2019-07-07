@@ -112,7 +112,7 @@ namespace mik {
 	}
 
 	MIK_LUA(clear) {
-		if (lua_gettop(L) == 0) {
+		if (lua_gettop(L) < 3) {
 			MIK->clear(0, 0, 0);
 		} else {
 			u8 r = u8(i32(luaL_checknumber(L, 1)) & 0xFF);

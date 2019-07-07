@@ -80,7 +80,7 @@ end
 
 function _draw()
 	mik.clear()
-	mik.tile(ninja,  mik.frame(ninja),  160, 120)
+	mik.aspr(ninja, 160, 120)
 
 	for i = 1, #letters do
 		local lt = letters[i]
