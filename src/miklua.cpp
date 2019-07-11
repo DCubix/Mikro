@@ -325,11 +325,7 @@ namespace mik {
 		u8 r = u8(i32(luaL_checknumber(L, 4)) & 0xFF);
 		u8 g = u8(i32(luaL_checknumber(L, 5)) & 0xFF);
 		u8 b = u8(i32(luaL_checknumber(L, 6)) & 0xFF);
-		bool ghost = false;
-		if (lua_gettop(L) == 7) {
-			ghost = luaL_checkboolean(L, 7);
-		}
-		bmp->dot(x, y, r, g, b, ghost);
+		bmp->dot(x, y, r, g, b);
 		return 0;
 	}
 

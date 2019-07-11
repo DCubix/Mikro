@@ -1,9 +1,12 @@
 #include "mik.h"
 
 #include "log.h"
+//#include "frame.h"
+
 #include <map>
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 
 namespace mik {
 
@@ -68,7 +71,7 @@ namespace mik {
 			"Mik",
 			SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
 			MikScreenWidth * MikScreenUpscale, MikScreenHeight * MikScreenUpscale,
-			SDL_WINDOW_SHOWN
+			SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI
 		);
 		if (m_window == nullptr) {
 			SDL_Quit();
@@ -90,9 +93,17 @@ namespace mik {
 			MikScreenWidth, MikScreenHeight
 		);
 
+		// Frame
+		// std::vector<unsigned char> imgData;
+		// unsigned long w, h;
+		// decodePNG(imgData, w, h, frame_png, frame_png_len);
+		// m_frame = SDL_CreateTexture(m_renderer, SDL_PIXELFORMAT_RGBA32, SDL_TEXTUREACCESS_STATIC, w, h);
+		// SDL_UpdateTexture(m_frame, nullptr, imgData.data(), w * 4);
+		//
+
 		m_buffer = Sprite(MikScreenWidth, MikScreenHeight);
 		m_clip[0] = m_clip[1] = m_clip[2] = m_clip[3] = 0;
-		m_key = { 255, 0, 255, false };
+		m_key = { 5, 0, 5 };
 
 		f64 accum = 0.0;
 		f64 lastTime = f64(SDL_GetTicks()) / 1000.0;
@@ -128,6 +139,8 @@ namespace mik {
 					case SDL_QUIT: quit(); break;
 					case SDL_KEYDOWN: {
 						u32 k = evt.key.keysym.sym;
+						if (k == SDLK_ESCAPE) quit();
+
 						if (EventMapping.find(k) != EventMapping.end()) {
 							m_input[EventMapping[k]].pressed = true;
 							m_input[EventMapping[k]].held = true;
@@ -188,6 +201,8 @@ namespace mik {
 			if (canRender) {
 				m_game->onDraw(*this);
 
+				// SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 0);
+				// SDL_SetRenderDrawBlendMode(m_renderer, SDL_BLENDMODE_BLEND);
 				SDL_RenderClear(m_renderer);
 
 				u8* pixels;
@@ -195,7 +210,10 @@ namespace mik {
 				SDL_LockTexture(m_buf, nullptr, (void**)&pixels, &pitch);
 				for (u32 y = 0; y < MikScreenHeight; y++) {
 					for (u32 x = 0; x < MikScreenWidth; x++) {
-						const Color col = m_buffer.get(x, y);
+						Color col = m_buffer.get(x, y);
+						col.r = util::rgbConvert(col.r);
+						col.g = util::rgbConvert(col.g);
+						col.b = util::rgbConvert(col.b);
 						const u32 di = (x + y * MikScreenWidth) * 3;
 						pixels[di + 0] = col.r;
 						pixels[di + 1] = col.g;
@@ -204,7 +222,9 @@ namespace mik {
 				}
 				SDL_UnlockTexture(m_buf);
 
-				SDL_Rect dst = { 0, 0, MikScreenWidth * MikScreenUpscale, MikScreenHeight * MikScreenUpscale };
+				// SDL_RenderCopy(m_renderer, m_frame, nullptr, nullptr);
+
+				SDL_Rect dst = { 0, 0, MikScreenWidth, MikScreenHeight };
 				SDL_RenderCopy(m_renderer, m_buf, nullptr, &dst);
 				SDL_RenderPresent(m_renderer);
 			}
@@ -219,6 +239,7 @@ namespace mik {
 		LogI("Mik has been stopped successfully!");
 
 		SDL_DestroyTexture(m_buf);
+		// SDL_DestroyTexture(m_frame);
 		SDL_DestroyRenderer(m_renderer);
 		SDL_DestroyWindow(m_window);
 		SDL_Quit();
@@ -306,7 +327,7 @@ namespace mik {
 
 	void Mik::dot(i32 x, i32 y, u8 r, u8 g, u8 b) {
 		if (!pointInClip(x, y) && clipEnabled()) return;
-		if (r == m_key.r && g == m_key.g && b == m_key.b) return;
+		if (m_key.r == r && m_key.g == g && m_key.b == b) return;
 		m_buffer.dot(x, y, r, g, b);
 	}
 
@@ -422,8 +443,6 @@ namespace mik {
 				i32 srcy = flipy ? h - 1 - iy : iy;
 
 				Color col = spr->get(srcx + sx, srcy + sy);
-				if (col.ghost) continue;
-
 				dot(px, py, col.r, col.g, col.b);
 			}
 		}

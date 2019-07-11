@@ -17,7 +17,7 @@
 namespace mik {
 	constexpr u32 MikScreenWidth = 320;
 	constexpr u32 MikScreenHeight = 240;
-	constexpr u32 MikScreenUpscale = 2;
+	constexpr u32 MikScreenUpscale = 1;
 	constexpr f32 MikTimeStep = 1.0 / 60.0;
 
 	enum MikEvent {
@@ -86,7 +86,7 @@ namespace mik {
 		void setTitle(std::string const& title);
 
 		/// Sets the key color (for transparency)
-		void key(u8 r, u8 g, u8 b) { m_key = { r, g, b, false }; }
+		void key(u8 r, u8 g, u8 b) { m_key = { r, g, b }; }
 
 		/// Sets the clipping region
 		void clip(u32 x, u32 y, u32 w, u32 h);
@@ -155,7 +155,7 @@ namespace mik {
 	private:
 		SDL_Window* m_window;
 		SDL_Renderer* m_renderer;
-		SDL_Texture* m_buf;
+		SDL_Texture *m_buf, *m_frame;
 
 		bool m_running{ false };
 

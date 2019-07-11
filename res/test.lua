@@ -2,6 +2,7 @@ charMap = " !\"#$%&'()*+,-./0123456789:;=  ?@ABCDEFGHIJKLMNOPQRSTUVWXYZ      abc
 ninja = nil
 font = nil
 anim = nil
+pal = nil
 
 music1 = nil
 music2 = nil
@@ -18,6 +19,16 @@ t = 0
 function _init()
 	ninja = mik.load_sprite("../res/ninja.png", 7, 4)
 	font = mik.load_sprite("../res/font.png", 1, #charMap)
+
+	pal = mik.create_sprite(72, 12)
+	for y = 0, mik.height(pal) do
+		for x = 0, mik.width(pal) do
+			local r = math.floor(x / 2) % 6
+			local g = math.floor(x / 12)
+			local b = math.floor(y / 2)
+			mik.pset(pal, x, y,  r, g, b)
+		end
+	end
 
 	music1 = mik.load_sound("../res/music1.wav")
 	music2 = mik.load_sound("../res/music2.wav")
@@ -86,4 +97,6 @@ function _draw()
 		local lt = letters[i]
 		mik.chr(font, charMap, lt.c, lt.x, lt.y)
 	end
+
+	mik.spr(pal, 0, 0)
 end
