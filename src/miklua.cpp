@@ -628,12 +628,14 @@ namespace mik {
 		} else {
 			LogE("Invalid cartridge file.");
 		}
+	}
 
-		// if (luaL_dofile(L, scriptFile.c_str()) != 0) {
-		// 	LogE("[script] ", lua_tostring(L, -1));
-		// } else {
-		// 	mik->run();
-		// }
+	void MikLua::runScript(std::string const& scriptFile) {
+		if (luaL_dofile(L, scriptFile.c_str()) != 0) {
+			LogE("[script] ", lua_tostring(L, -1));
+		} else {
+			mik->run();
+		}
 	}
 
 	void MikLua::run(std::vector<u8> const& bytecode) {

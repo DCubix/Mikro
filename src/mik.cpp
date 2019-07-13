@@ -224,7 +224,7 @@ namespace mik {
 
 				// SDL_RenderCopy(m_renderer, m_frame, nullptr, nullptr);
 
-				SDL_Rect dst = { 0, 0, MikScreenWidth, MikScreenHeight };
+				SDL_Rect dst = { 0, 0, MikScreenWidth * MikScreenUpscale, MikScreenHeight * MikScreenUpscale };
 				SDL_RenderCopy(m_renderer, m_buf, nullptr, &dst);
 				SDL_RenderPresent(m_renderer);
 			}

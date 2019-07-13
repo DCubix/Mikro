@@ -125,8 +125,20 @@ int main(int argc, char** argv) {
 			LogI("Wrote ", dat.size() / 1024, " KB");
 			LogI("Success!");
 		} else {
+			std::string ext = freeArgs[0].substr(freeArgs[0].find_last_of('.')+1);
+			std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
+
 			MikLua::init();
-			MikLua::run(freeArgs[0]);
+
+			if (ext == "gam") {
+				MikLua::run(freeArgs[0]);
+			} else if (ext == "lua") {
+				MikLua::runScript(freeArgs[0]);
+			} else {
+				LogE("Unknown file format.");
+				MikLua::deinit();
+				return 1;
+			}
 			MikLua::deinit();
 		}
 	}
