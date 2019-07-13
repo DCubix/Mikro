@@ -6,6 +6,12 @@
 
 #include "log.h"
 
+#include "gzip/compress.hpp"
+#include "gzip/config.hpp"
+#include "gzip/decompress.hpp"
+#include "gzip/utils.hpp"
+#include "gzip/version.hpp"
+
 /**
  *    Cartridge Format
  * +----------------------------------+
@@ -23,7 +29,7 @@
  * +----------------------------------+
  * | SCRIPT SECTION                   |
  * +----------------------------------+
- * | DATA SECTION                     |
+ * | DATA SECTION (DEFLATE)           |
  * +----------------------------------+
  */
 
@@ -50,9 +56,16 @@ namespace mik {
 		bw->write(u32(m_script.size()));
 		bw->writeAll(m_script);
 
+		std::unique_ptr<ByteWriter> dataSection = std::make_unique<ByteWriter>();
 		for (auto&& fe : m_files) {
-			bw->writeAll(fe->data);
+			dataSection->writeAll(fe->data);
 		}
+
+		LogI("Data section size: ", dataSection->size() / 1024, " KB");
+
+		// Compress the DATA section
+		std::string dat = gzip::compress(reinterpret_cast<const char*>(dataSection->data()), dataSection->size());
+		bw->writeAll(std::vector<u8>(dat.begin(), dat.end()));
 
 		return bw->dataVector();
 	}
@@ -83,8 +96,17 @@ namespace mik {
 		u32 scriptSize = br->read<u32>();
 		m_script = br->readAll(scriptSize);
 
+		// Read compressed Data
+		auto comp = br->readAll(br->size()); // Data section is always the last one so... :P
+		auto dCompStr = gzip::decompress(reinterpret_cast<const char*>(comp.data()), comp.size());
+		std::vector<u8> dComp(dCompStr.begin(), dCompStr.end());
+
+		LogI("Data section size: ", dComp.size() / 1024, " KB");
+
+		std::unique_ptr<ByteReader> cbr = std::make_unique<ByteReader>(dComp);
+
 		for (auto&& fe : m_files) {
-			fe->data = br->readAll(fe->size);
+			fe->data = cbr->readAll(fe->size);
 		}
 	}
 
