@@ -18,7 +18,7 @@
 namespace mik {
 	constexpr u32 MikScreenWidth = 320;
 	constexpr u32 MikScreenHeight = 240;
-	constexpr u32 MikScreenUpscale = 1;
+	constexpr u32 MikScreenUpscale = 2;
 	constexpr f32 MikTimeStep = 1.0 / 60.0;
 
 	enum MikEvent {
