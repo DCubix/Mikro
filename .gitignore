@@ -4,5 +4,6 @@
 build
 doctrees
 *.exe
+*.gam
 [Dd]ebug
 [Rr]elease

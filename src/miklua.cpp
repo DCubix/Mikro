@@ -1,6 +1,10 @@
 #include "miklua.h"
 
+#include <fstream>
+#include <iterator>
+
 #include "log.h"
+#include "cartridge.h"
 
 #define MIK_LUA(name) static int mik_##name(lua_State* L)
 
@@ -546,7 +550,7 @@ namespace mik {
 		{ nullptr, nullptr }
 	};
 
-	void MikLua::run(std::string const& scriptFile) {
+	void MikLua::init() {
 		mik = new Mik(new MikLuaGame());
 
 		L = luaL_newstate();
@@ -565,17 +569,83 @@ namespace mik {
 			lua_settable(L, -3);
 			lua_pop(L, 1);
 		}
+	}
 
-		if (luaL_dofile(L, scriptFile.c_str()) != 0) {
-			LogE("[script] ", lua_tostring(L, -1));
-			lua_close(L);
-			delete mik;
-			return;
-		}
-
-		mik->run();
+	void MikLua::deinit() {
 		lua_close(L);
 		delete mik;
+	}
+
+	static int writer(lua_State *L, const void *p, size_t size, void *ud) {
+		const u8* d = (const u8*)(p);
+
+		std::vector<u8>* bc = (std::vector<u8>*)(ud);
+		bc->reserve(size);
+
+		for (u32 i = 0; i < size; i++) bc->push_back(d[i]);
+
+		return 0;
+	}
+
+	std::vector<u8> MikLua::compile(std::string const& scriptFile) {
+		std::vector<u8> bytecode;
+		if (luaL_loadfile(L, scriptFile.c_str()) != 0) {
+			LogE("[script] ", lua_tostring(L, -1));
+		} else {
+			lua_dump(L, writer, &bytecode, 1);
+		}
+		return bytecode;
+	}
+
+	void MikLua::run(std::string const& cartFile) {
+		// Load cartridge
+		std::ifstream fp(cartFile, std::ios::binary);
+		if (fp.good()) {
+			fp.unsetf(std::ios::skipws);
+
+			fp.seekg(0, std::ios::end);
+			auto sz = fp.tellg();
+			fp.seekg(0, std::ios::beg);
+
+			std::vector<u8> data;
+			data.reserve(sz);
+			data.insert(data.begin(), std::istream_iterator<u8>(fp), std::istream_iterator<u8>());
+			fp.close();
+
+			CartridgePtr cart = std::make_unique<Cartridge>();
+			cart->load(data);
+
+			// put files
+			for (auto&& fe : cart->files()) {
+				if (fe->type == "PNG") mik->putSprite(fe->name, new Sprite(fe->data));
+				else if (fe->type == "WAV") mik->putSound(fe->name, new Sound(fe->data));
+			}
+
+			// run
+			auto script = cart->scriptCopy();
+			cart.reset();
+			run(script);
+		} else {
+			LogE("Invalid cartridge file.");
+		}
+
+		// if (luaL_dofile(L, scriptFile.c_str()) != 0) {
+		// 	LogE("[script] ", lua_tostring(L, -1));
+		// } else {
+		// 	mik->run();
+		// }
+	}
+
+	void MikLua::run(std::vector<u8> const& bytecode) {
+		if (luaL_loadbuffer(L, reinterpret_cast<const char*>(bytecode.data()), bytecode.size(), "") != 0) {
+			LogE("[script] ", lua_tostring(L, -1));
+		} else {
+			if (lua_pcall(L, 0, LUA_MULTRET, 0) != 0) {
+				LogE("[script] ", lua_tostring(L, -1));
+			} else {
+				mik->run();
+			}
+		}
 	}
 
 	void MikLua::call(std::string const& function) {

@@ -27,6 +27,7 @@ namespace mik {
 		virtual ~Sound() = default;
 
 		Sound(std::string const& fileName);
+		Sound(std::vector<u8> const& data);
 
 		u32 frequency() const { return m_frequency; }
 		std::vector<f32>& data() { return m_data; }

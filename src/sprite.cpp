@@ -69,32 +69,40 @@ namespace mik {
 
 			fp.close();
 
-			std::vector<unsigned char> pngData;
-			unsigned long width, height;
-			if (decodePNG(pngData, width, height, data.data(), data.size()) != 0) {
-				LogE("Failed to load \"", fileName, "\": Invalid PNG image.");
-				return;
-			}
-
-			m_data.reserve(width * height);
-			for (u32 i = 0; i < pngData.size(); i += 4) {
-				u32 j = i / 4;
-				u32 x = j % width;
-				u32 y = j / width;
-				u8 r = util::componentConvert(util::dither(x, y, pngData[i + 0]));
-				u8 g = util::componentConvert(util::dither(x, y, pngData[i + 1]));
-				u8 b = util::componentConvert(util::dither(x, y, pngData[i + 2]));
-				if (pngData[i + 3] < 127) {
-					r = 5; g = 0; b = 5;
-				}
-				u8 index = util::palette(r, g, b);
-				m_data.push_back(index);
-			}
-			m_width = u32(width);
-			m_height = u32(height);
+			load(data);
 		} else {
 			LogE("Failed to load \"", fileName, "\": Not found.");
 		}
+	}
+
+	Sprite::Sprite(std::vector<u8> const& data) {
+		load(data);
+	}
+
+	void Sprite::load(std::vector<u8> const& data) {
+		std::vector<unsigned char> pngData;
+		unsigned long width, height;
+		if (decodePNG(pngData, width, height, data.data(), data.size()) != 0) {
+			LogE("Failed to load. Invalid PNG image.");
+			return;
+		}
+
+		m_data.reserve(width * height);
+		for (u32 i = 0; i < pngData.size(); i += 4) {
+			u32 j = i / 4;
+			u32 x = j % width;
+			u32 y = j / width;
+			u8 r = util::componentConvert(util::dither(x, y, pngData[i + 0]));
+			u8 g = util::componentConvert(util::dither(x, y, pngData[i + 1]));
+			u8 b = util::componentConvert(util::dither(x, y, pngData[i + 2]));
+			if (pngData[i + 3] < 127) {
+				r = 5; g = 0; b = 5;
+			}
+			u8 index = util::palette(r, g, b);
+			m_data.push_back(index);
+		}
+		m_width = u32(width);
+		m_height = u32(height);
 	}
 
 	Sprite::Sprite(u32 width, u32 height) {

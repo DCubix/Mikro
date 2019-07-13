@@ -185,7 +185,7 @@ namespace mik {
 				SDL_UnlockAudioDevice(m_device);
 
 				/// Update animators
-				for (auto& spr : m_sprites) {
+				for (auto&& [n, spr] : m_sprites) {
 					spr->animator().update(f32(MikTimeStep));
 				}
 
@@ -506,10 +506,17 @@ namespace mik {
 			LogE("Invalid file name.");
 			return nullptr;
 		}
-		m_sprites.push_back(std::make_unique<Sprite>(fileName));
-		m_sprites.back().get()->rows(rows);
-		m_sprites.back().get()->cols(cols);
-		return m_sprites.back().get();
+		Sprite* ret;
+		auto pos = m_sprites.find(fileName);
+		if (pos != m_sprites.end()) {
+			ret = pos->second.get();
+		} else {
+			m_sprites.insert({ fileName, std::make_unique<Sprite>(fileName) });
+			ret = m_sprites[fileName].get();
+		}
+		ret->rows(rows);
+		ret->cols(cols);
+		return ret;
 	}
 
 	Sprite* Mik::createSprite(u32 w, u32 h) {
@@ -517,13 +524,27 @@ namespace mik {
 			LogE("Invalid dimensions.");
 			return nullptr;
 		}
-		m_sprites.push_back(std::make_unique<Sprite>(w, h));
-		return m_sprites.back().get();
+		std::string name = std::to_string(m_spriteIndex++);
+		m_sprites.insert({ name, std::make_unique<Sprite>(w, h) });
+		return m_sprites[name].get();
 	}
 
 	Sound* Mik::loadSound(std::string const& fileName) {
-		m_sounds.push_back(std::make_unique<Sound>(fileName));
-		return m_sounds.back().get();
+		auto pos = m_sounds.find(fileName);
+		if (pos != m_sounds.end()) {
+			return pos->second.get();
+		}
+
+		m_sounds.insert({ fileName, std::make_unique<Sound>(fileName) });
+		return m_sounds[fileName].get();
+	}
+
+	void Mik::putSprite(std::string const& name, Sprite* spr) {
+		m_sprites.insert({ name, std::unique_ptr<Sprite>(spr) });
+	}
+
+	void Mik::putSound(std::string const& name, Sound* snd) {
+		m_sounds.insert({ name, std::unique_ptr<Sound>(snd) });
 	}
 
 }

@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <array>
+#include <map>
 
 #if !__has_include("SDL.h")
 #include "SDL2/SDL.h"
@@ -152,6 +153,9 @@ namespace mik {
 		/// Audio System
 		MikAudio* audio() { return m_audio.get(); }
 
+		void putSprite(std::string const& name, Sprite* spr);
+		void putSound(std::string const& name, Sound* snd);
+
 	private:
 		SDL_Window* m_window;
 		SDL_Renderer* m_renderer;
@@ -166,8 +170,9 @@ namespace mik {
 		///
 
 		/// Assets
-		std::vector<std::unique_ptr<Sprite>> m_sprites;
-		std::vector<std::unique_ptr<Sound>> m_sounds;
+		std::map<std::string, std::unique_ptr<Sprite>> m_sprites;
+		std::map<std::string, std::unique_ptr<Sound>> m_sounds;
+		u32 m_spriteIndex{0};
 		///
 
 		std::unique_ptr<MikGame> m_game;

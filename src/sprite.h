@@ -72,6 +72,7 @@ namespace mik {
 
 			/// Load From PNG file
 			Sprite(std::string const& fileName);
+			Sprite(std::vector<u8> const& data);
 
 			/// Create blank
 			Sprite(u32 width, u32 height);
@@ -98,6 +99,8 @@ namespace mik {
 			void cols(u32 v) { m_cols = v; }
 
 		private:
+			void load(std::vector<u8> const& data);
+
 			Animator m_animator{};
 			u32 m_rows{ 1 }, m_cols{ 1 };
 

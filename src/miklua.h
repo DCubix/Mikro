@@ -13,7 +13,14 @@ extern "C" {
 namespace mik {
 	class MikLua {
 	public:
-		static void run(std::string const& scriptFile);
+		static void init();
+		static void deinit();
+
+		static std::vector<u8> compile(std::string const& scriptFile);
+
+		static void run(std::string const& cartFile);
+
+		static void run(std::vector<u8> const& bytecode);
 
 		static void call(std::string const& function);
 		static void call(std::string const& function, float arg);

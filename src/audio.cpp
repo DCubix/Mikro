@@ -18,6 +18,20 @@ namespace mik {
 		drwav_uninit(&wav);
 	}
 
+	Sound::Sound(std::vector<u8> const& data) {
+		drwav wav;
+		if (!drwav_init_memory(&wav, data.data(), data.size())) {
+			LogE("Invalid WAV file.");
+			return;
+		}
+
+		m_frequency = wav.sampleRate;
+		m_data.resize(wav.totalPCMFrameCount * wav.channels);
+		drwav_read_pcm_frames_f32(&wav, wav.totalPCMFrameCount, m_data.data());
+
+		drwav_uninit(&wav);
+	}
+
 	MikAudio::MikAudio() {
 		for (u32 i = 0; i < MikAudioVoices; i++) resetVoice(i);
 		m_frequency = MikAudioFreq;
