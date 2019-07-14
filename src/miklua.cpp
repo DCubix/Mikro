@@ -498,6 +498,12 @@ namespace mik {
 		return 1;
 	}
 
+	MIK_LUA(array) {
+		int size = luaL_checkinteger(L, 1);
+		lua_createtable(L, size, 0);
+		return 1;
+	}
+
 	#define MIK_ENTRY(name) { #name, mik_##name }
 	static const luaL_Reg miklib[] = {
 		MIK_ENTRY(quit),
@@ -541,6 +547,7 @@ namespace mik {
 		MIK_ENTRY(pan),
 		MIK_ENTRY(play_music),
 		MIK_ENTRY(stop_music),
+		MIK_ENTRY(array),
 		{ nullptr, nullptr }
 	};
 
@@ -550,11 +557,24 @@ namespace mik {
 		{ nullptr, nullptr }
 	};
 
+	static int traceback(lua_State *L) {
+		std::string message = "";
+		const char* msg = lua_type(L, 1) == LUA_TSTRING ? lua_tostring(L, 1) : nullptr;
+		if (msg) {
+			message.append(msg);
+		}
+
+		luaL_traceback(L, L, message.c_str(), 1);
+		return 1;
+	}
+
 	void MikLua::init() {
 		mik = new Mik(new MikLuaGame());
 
 		L = luaL_newstate();
 		luaL_openlibs(L);
+
+		lua_pushcfunction(L, traceback);
 
 		lua_newtable(L);
 		luaL_setfuncs(L, miklib, 0);
@@ -631,18 +651,26 @@ namespace mik {
 	}
 
 	void MikLua::runScript(std::string const& scriptFile) {
-		if (luaL_dofile(L, scriptFile.c_str()) != 0) {
-			LogE("[script] ", lua_tostring(L, -1));
+		lua_pushcfunction(L, traceback);
+		int tb = lua_gettop(L);
+		if (luaL_loadfile(L, scriptFile.c_str()) == 0) {
+			if (lua_pcall(L, 0, LUA_MULTRET, tb) != 0) {
+				LogE("[script] ", lua_tostring(L, -1));
+			} else {
+				mik->run();
+			}
 		} else {
-			mik->run();
+			LogE("[script] ", lua_tostring(L, -1));
 		}
 	}
 
 	void MikLua::run(std::vector<u8> const& bytecode) {
+		lua_pushcfunction(L, traceback);
+		int tb = lua_gettop(L);
 		if (luaL_loadbuffer(L, reinterpret_cast<const char*>(bytecode.data()), bytecode.size(), "") != 0) {
 			LogE("[script] ", lua_tostring(L, -1));
 		} else {
-			if (lua_pcall(L, 0, LUA_MULTRET, 0) != 0) {
+			if (lua_pcall(L, 0, LUA_MULTRET, tb) != 0) {
 				LogE("[script] ", lua_tostring(L, -1));
 			} else {
 				mik->run();
@@ -652,20 +680,28 @@ namespace mik {
 
 	void MikLua::call(std::string const& function) {
 		lua_settop(L, 0);
+
+		lua_pushcfunction(L, traceback);
+		int tb = lua_gettop(L);
+
 		lua_getglobal(L, function.c_str());
 		if (lua_isfunction(L, -1) == 0) return;
-		if (lua_pcall(L, 0, 0, 0) != 0) {
-			LogE("[lua: ", function, "] ", lua_tostring(L, -1));
+		if (lua_pcall(L, 0, 0, tb) != 0) {
+			LogE("[", function, "] ", lua_tostring(L, -1));
 		}
 	}
 
 	void MikLua::call(std::string const& function, float arg) {
 		lua_settop(L, 0);
+
+		lua_pushcfunction(L, traceback);
+		int tb = lua_gettop(L);
+
 		lua_getglobal(L, function.c_str());
 		if (lua_isfunction(L, -1) == 0) return;
 		lua_pushnumber(L, arg);
-		if (lua_pcall(L, 1, 0, 0) != 0) {
-			LogE("[lua: ", function, "] ", lua_tostring(L, -1));
+		if (lua_pcall(L, 1, 0, tb) != 0) {
+			LogE("[", function, "] ", lua_tostring(L, -1));
 		}
 	}
 }
