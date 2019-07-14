@@ -67,7 +67,7 @@ namespace mik {
 		MikAudio();
 		virtual ~MikAudio() = default;
 
-		Voice* play(Sound* sound, f32 gain = 1.0f, f32 pitch = 1.0f, f32 pan = 0.0f);
+		Voice* play(Sound* sound, f32 gain = 1.0f, f32 pitch = 0.0f, f32 pan = 0.0f);
 		void stop(Sound* sound);
 
 		void playMusic(Sound* sound, f32 gain = 1.0f, f32 pan = 0.0f, f32 fade = 0.0f);

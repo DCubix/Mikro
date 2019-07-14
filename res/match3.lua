@@ -309,7 +309,7 @@ function _update(dt)
 					target = nil
 					swapFail = false
 				end
-				mik.play_sound(SFX.drag, 0.5)
+				mik.play_sound(SFX.drag, 0.5, math.random(-5, 5))
 				state = STATE_CHECK
 			end
 

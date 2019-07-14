@@ -217,7 +217,7 @@
 		{
 			"ns": "mik",
 			"func": "chr",
-			"desc": "Draws a single <u>character</u> from a <u>sprite font</u>.",
+			"desc": "Draws a single <u>character</u> from a <u>sprite font</u>. Returns the next X position for the next char.",
 			"args": [
 				{ "name": "font", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>" },
 
@@ -337,7 +337,8 @@
 				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" },
 				{ "name": "name", "desc": "Animation name" },
 				{ "name": "frames", "desc": "Animation frames array", "default": "{}" }
-			]
+			],
+			"example": "./examples/add_animation.lua"
 		},
 		{
 			"ns": "mik",

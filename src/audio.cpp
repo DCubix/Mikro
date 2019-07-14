@@ -45,7 +45,7 @@ namespace mik {
 		}
 		Voice* voice = getFreeVoice();
 		voice->gain = std::max(gain, 0.0f);
-		voice->pitch = std::clamp(pitch, 0.1f, 10.0f);
+		voice->pitch = std::clamp(pitch, -5.0f, 5.0f);
 		voice->pan = std::clamp(pan, -1.0f, 1.0f);
 		voice->sound = sound;
 		voice->position = 0.0f;
@@ -180,7 +180,8 @@ namespace mik {
 		f32 sample = std::clamp(sound->data()[u32(position)] * gain, -1.0f, 1.0f);
 		f32 left = std::clamp(sample * (0.5f - pan), -1.0f, 1.0f);
 		f32 right = std::clamp(sample * (0.5f + pan), -1.0f, 1.0f);
-		position += f32(sound->frequency()) * step * pitch;
+		f32 pitchO = 0.3076f * pitch * pitch + 1.726f * pitch + 1.0f;
+		position += f32(sound->frequency()) * step * pitchO;
 		return std::make_tuple(left, right);
 	}
 

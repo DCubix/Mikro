@@ -387,7 +387,7 @@ namespace mik {
 		Sound* snd = (Sound*) luaL_checklightuserdata(L, 1);
 		int args = lua_gettop(L);
 		f32 gain = 1.0f;
-		f32 pitch = 1.0f;
+		f32 pitch = 0.0f;
 		f32 pan = 0.0f;
 		if (args >= 2) {
 			gain = luaL_checknumber(L, 2);
