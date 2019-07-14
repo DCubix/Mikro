@@ -119,8 +119,6 @@ function make_emitter(x, y, vx, vy, colorA, colorB, spd, final, lif)
 					spd, true, lf
 				)
 			end
-
-			print("PARTICLES: " .. #particles)
 		end,
 		colorA = colorA,
 		colorB = colorB
