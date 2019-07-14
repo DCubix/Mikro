@@ -439,12 +439,12 @@
 			"desc": "Button constant strings.",
 			"list": [
 				{ "left": "Left button. Mapped to <b>Left Arrow Key</b> and <b>S Key</b>." },
-				{ "right": "Right button. Mapped to **Right Arrow Key** and **F Key**." },
-				{ "up": "Up button. Mapped to **Up Arrow Key** and **E Key**." },
-				{ "down": "Down button. Mapped to **Down Arrow Key** and **D Key**." },
-				{ "a": "A button. Mapped to **Z Key** and **K Key**." },
-				{ "b": "B button. Mapped to **X Key** and **L Key**." },
-				{ "start": "Start button. Mapped to **Enter Key** and **Numpad Enter Key**." },
+				{ "right": "Right button. Mapped to <b>Right Arrow Key</b> and <b>F Key</b>." },
+				{ "up": "Up button. Mapped to <b>Up Arrow Key</b> and <b>E Key</b>." },
+				{ "down": "Down button. Mapped to <b>Down Arrow Key</b> and <b>D Key</b>." },
+				{ "a": "A button. Mapped to <b>Z Key</b> and <b>K Key</b>." },
+				{ "b": "B button. Mapped to <b>X Key</b> and <b>L Key</b>." },
+				{ "start": "Start button. Mapped to <b>Enter Key</b> and <b>Numpad Enter Key</b>." },
 				{ "left_mouse": "Left mouse button." },
 				{ "middle_mouse": "Middle mouse button." },
 				{ "right_mouse": "Right mouse button." }
