@@ -1,0 +1,454 @@
+{
+	"entries": [
+		{
+			"ns": "mik",
+			"func": "quit",
+			"desc": "Quits the game."
+		},
+		{
+			"ns": "mik",
+			"func": "btnp",
+			"desc": "Returns true when a button has been pressed.",
+			"args": [
+				{ "name": "name", "desc": "The button name. See <a href=\"#Buttons\">Buttons</a>" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "btnr",
+			"desc": "Returns true when a button has been released.",
+			"args": [
+				{ "name": "name", "desc": "The button name. See <a href=\"./#Buttons\">Buttons</a>" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "btnh",
+			"desc": "Returns true when a button has been held.",
+			"args": [
+				{ "name": "name", "desc": "The button name. See <a href=\"./#Buttons\">Buttons</a>" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "warp",
+			"desc": "Warps the mouse to a specific location.",
+			"args": [
+				{ "name": "x", "desc": "X coordinate." },
+				{ "name": "y", "desc": "Y coordinate." }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "mousex",
+			"desc": "Gets the current mouse's X coordinate."
+		},
+		{
+			"ns": "mik",
+			"func": "mousey",
+			"desc": "Gets the current mouse's Y coordinate."
+		},
+		{
+			"ns": "mik",
+			"func": "title",
+			"desc": "Gets/Sets the window title. If no argument is specified, it acts as a getter.",
+			"args": [
+				{ "name": "title", "default": "nil", "desc": "The text to set the window title to" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "key",
+			"desc": "Sets the transparency key color.",
+			"args": [
+				{ "name": "r", "desc": "Red component" },
+				{ "name": "g", "desc": "Green component" },
+				{ "name": "b", "desc": "Blue component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "clip",
+			"desc": "Sets/Unsets the clipping region of the next drawing commands. If no argument is passed, or if any of the width and height components is zero, clipping will be disabled.",
+			"args": [
+				{ "name": "x", "desc": "X component" },
+				{ "name": "y", "desc": "Y component" },
+				{ "name": "width", "desc": "Width component" },
+				{ "name": "height", "desc": "Height component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "clear",
+			"desc": "Clears the screen to an optional background color.",
+			"args": [
+				{ "name": "r", "desc": "Red component", "default": "0" },
+				{ "name": "g", "desc": "Green component", "default": "0" },
+				{ "name": "b", "desc": "Blue component", "default": "0" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "dot",
+			"desc": "Draws a <u>dot</u> (pixel) at a specified <u>position</u> (x, y) with a specified <u>color</u> (r, g, b).",
+			"args": [
+				{ "name": "x", "desc": "X position component" },
+				{ "name": "y", "desc": "Y position component" },
+				{ "name": "r", "desc": "Red component" },
+				{ "name": "g", "desc": "Green component" },
+				{ "name": "b", "desc": "Blue component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "line",
+			"desc": "Draws a <u>line</u> between two point with a specified <u>color</u> (r, g, b).",
+			"args": [
+				{ "name": "x1", "desc": "Start X" },
+				{ "name": "y1", "desc": "Start Y" },
+				{ "name": "x2", "desc": "End X" },
+				{ "name": "y2", "desc": "End Y" },
+				{ "name": "r", "desc": "Red component" },
+				{ "name": "g", "desc": "Green component" },
+				{ "name": "b", "desc": "Blue component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "rect",
+			"desc": "Draws a <u>rectangle</u> with a specified <u>color</u> (r, g, b).",
+			"args": [
+				{ "name": "x", "desc": "X component" },
+				{ "name": "y", "desc": "Y component" },
+				{ "name": "width", "desc": "Width component" },
+				{ "name": "height", "desc": "Height component" },
+				{ "name": "r", "desc": "Red component" },
+				{ "name": "g", "desc": "Green component" },
+				{ "name": "b", "desc": "Blue component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "rectf",
+			"desc": "Draws a <u>filled rectangle</u> with a specified <u>color</u> (r, g, b).",
+			"args": [
+				{ "name": "x", "desc": "X component" },
+				{ "name": "y", "desc": "Y component" },
+				{ "name": "width", "desc": "Width component" },
+				{ "name": "height", "desc": "Height component" },
+				{ "name": "r", "desc": "Red component" },
+				{ "name": "g", "desc": "Green component" },
+				{ "name": "b", "desc": "Blue component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "circ",
+			"desc": "Draws a <u>circle</u> with a specified <u>color</u> (r, g, b).",
+			"args": [
+				{ "name": "x", "desc": "X component" },
+				{ "name": "y", "desc": "Y component" },
+				{ "name": "rad", "desc": "Radius" },
+				{ "name": "r", "desc": "Red component" },
+				{ "name": "g", "desc": "Green component" },
+				{ "name": "b", "desc": "Blue component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "circf",
+			"desc": "Draws a <u>filled circle</u> with a specified <u>color</u> (r, g, b).",
+			"args": [
+				{ "name": "x", "desc": "X component" },
+				{ "name": "y", "desc": "Y component" },
+				{ "name": "rad", "desc": "Radius" },
+				{ "name": "r", "desc": "Red component" },
+				{ "name": "g", "desc": "Green component" },
+				{ "name": "b", "desc": "Blue component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "spr",
+			"desc": "Draws a <u>sprite</u>.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>" },
+				{ "name": "x", "desc": "X position component" },
+				{ "name": "y", "desc": "Y position component" },
+
+				{ "name": "sx", "desc": "Source Rect X component", "default": "0" },
+				{ "name": "sy", "desc": "Source Rect Y component", "default": "0" },
+				{ "name": "sw", "desc": "Source Rect Width component", "default": "0" },
+				{ "name": "sh", "desc": "Source Rect Height component", "default": "0" },
+
+				{ "name": "flipx", "desc": "If true, flips the sprite horizontally", "default": "false" },
+				{ "name": "flipy", "desc": "If true, flips the sprite vertically", "default": "false" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "aspr",
+			"desc": "Draws an <u>animated sprite</u>.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>" },
+				{ "name": "x", "desc": "X position component" },
+				{ "name": "y", "desc": "Y position component" },
+
+				{ "name": "flipx", "desc": "If true, flips the sprite horizontally", "default": "false" },
+				{ "name": "flipy", "desc": "If true, flips the sprite vertically", "default": "false" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "tile",
+			"desc": "Draws a <u>sprite tile</u>.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>" },
+
+				{ "name": "index", "desc": "Tile index" },
+
+				{ "name": "x", "desc": "X position component" },
+				{ "name": "y", "desc": "Y position component" },
+
+				{ "name": "flipx", "desc": "If true, flips the sprite horizontally", "default": "false" },
+				{ "name": "flipy", "desc": "If true, flips the sprite vertically", "default": "false" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "chr",
+			"desc": "Draws a single <u>character</u> from a <u>sprite font</u>.",
+			"args": [
+				{ "name": "font", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>" },
+
+				{ "name": "map", "desc": "Character map string" },
+
+				{ "name": "char", "desc": "Character to draw" },
+
+				{ "name": "x", "desc": "X position component" },
+				{ "name": "y", "desc": "Y position component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "text",
+			"desc": "Draws a <u>string</u> using a <u>sprite font</u>.",
+			"args": [
+				{ "name": "font", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>" },
+
+				{ "name": "map", "desc": "Character map string" },
+
+				{ "name": "text", "desc": "String to draw" },
+
+				{ "name": "x", "desc": "X position component" },
+				{ "name": "y", "desc": "Y position component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "load_sprite",
+			"desc": "Loads a <u>sprite</u> from a PNG image file.",
+			"args": [
+				{ "name": "fileName", "desc": "PNG image file name" },
+				{ "name": "rows", "desc": "Number of vertical sprites in the sprite sheet", "default": "1" },
+				{ "name": "cols", "desc": "Number of horizontal sprites in the sprite sheet", "default": "1" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "create_sprite",
+			"desc": "Creates an empty <u>sprite</u>.",
+			"args": [
+				{ "name": "w", "desc": "Sprite width" },
+				{ "name": "h", "desc": "Sprite height" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "width",
+			"desc": "Gets the width of a <u>sprite</u> or the width of the <u>screen</u> if no parameter is specified.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "height",
+			"desc": "Gets the height of a <u>sprite</u> or the height of the <u>screen</u> if no parameter is specified.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "pget",
+			"desc": "Gets a pixel color at a certain position from a <u>sprite</u>.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" },
+				{ "name": "x", "desc": "X position" },
+				{ "name": "y", "desc": "Y position" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "pset",
+			"desc": "Sets a pixel at a certain position in a <u>sprite</u>.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" },
+				{ "name": "x", "desc": "X position" },
+				{ "name": "y", "desc": "Y position" },
+				{ "name": "r", "desc": "Red component" },
+				{ "name": "g", "desc": "Green component" },
+				{ "name": "b", "desc": "Blue component" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "frame",
+			"desc": "Gets the current frame from an <u>animated sprite</u>.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "animation",
+			"desc": "Gets the current animation from an <u>animated sprite</u>.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "play",
+			"desc": "Plays a sprite animation.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" },
+				{ "name": "name", "desc": "Animation name. See <a href=\"./#mik_add_animation\">add_animation</a>" },
+				{ "name": "speed", "desc": "Animation speed in seconds" },
+				{ "name": "loop", "desc": "Sets the animation as looping" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "add_animation",
+			"desc": "Adds an animation to a sprite.",
+			"args": [
+				{ "name": "sprite", "desc": "A sprite object. See <a href=\"./#mik_create_sprite\">create_sprite</a>, <a href=\"./#mik_load_sprite\">load_sprite</a>", "default": "nil" },
+				{ "name": "name", "desc": "Animation name" },
+				{ "name": "frames", "desc": "Animation frames array", "default": "{}" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "load_sound",
+			"desc": "Loads a <u>sound</u> from a WAV file.",
+			"args": [
+				{ "name": "fileName", "desc": "WAV file name" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "play_sound",
+			"desc": "Plays a <u>sound</u>.",
+			"args": [
+				{ "name": "sound", "desc": "Sound object. See <a href=\"./#mik_load_sound\">load_sound</a>" },
+				{ "name": "gain", "desc": "The initial gain (volume) (0.0 - 1.0)", "default": "1.0" },
+				{ "name": "pitch", "desc": "The initial pitch (0.1 - 10.0)", "default": "1.0" },
+				{ "name": "pan", "desc": "The initial pan (-1.0 - 1.0 where 0.0 = center)", "default": "0.0" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "play_music",
+			"desc": "Plays a <u>music</u>.",
+			"args": [
+				{ "name": "sound", "desc": "Sound object. See <a href=\"./#mik_load_sound\">load_sound</a>" },
+				{ "name": "gain", "desc": "The initial gain (volume) (0.0 - 1.0)", "default": "1.0" },
+				{ "name": "pan", "desc": "The initial pan (-1.0 - 1.0 where 0.0 = center)", "default": "0.0" },
+				{ "name": "fade", "desc": "Fade time in seconds", "default": "0.0" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "stop_music",
+			"desc": "Stops the current <u>music</u>.",
+			"args": [
+				{ "name": "fade", "desc": "Fade time in seconds", "default": "0.0" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "volume",
+			"desc": "Gets/Sets the voice's volume/gain. If no <u>value</u> argument is passed, it will act as a getter.",
+			"args": [
+				{ "name": "voice", "desc": "Voice object from <a href=\"./#mik_play_sound\">play_sound</a>" },
+				{ "name": "value", "desc": "The volume/gain value (0.0 - 1.0)", "default": "nil" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "master_volume",
+			"desc": "Gets/Sets the master volume/gain. If no <u>value</u> argument is passed, it will act as a getter.",
+			"args": [
+				{ "name": "value", "desc": "The volume/gain value (0.0 - 1.0)", "default": "nil" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "pitch",
+			"desc": "Gets/Sets the voice's pitch. If no <u>value</u> argument is passed, it will act as a getter.",
+			"args": [
+				{ "name": "voice", "desc": "Voice object from <a href=\"./#mik_play_sound\">play_sound</a>" },
+				{ "name": "value", "desc": "The pitch value (0.1 - 10.0)", "default": "nil" }
+			]
+		},
+		{
+			"ns": "mik",
+			"func": "pan",
+			"desc": "Gets/Sets the voice's pan. If no <u>value</u> argument is passed, it will act as a getter.",
+			"args": [
+				{ "name": "voice", "desc": "Voice object from <a href=\"./#mik_play_sound\">play_sound</a>" },
+				{ "name": "value", "desc": "The pan value (-1.0 - 1.0)", "default": "nil" }
+			]
+		},
+
+		{
+			"ns": "math",
+			"func": "lerp",
+			"desc": "Linear interpolation.",
+			"args": [
+				{ "name": "a", "desc": "From" },
+				{ "name": "b", "desc": "To" },
+				{ "name": "t", "desc": "Factor" }
+			]
+		},
+		{
+			"ns": "math",
+			"func": "clamp",
+			"desc": "Value clamping.",
+			"args": [
+				{ "name": "v", "desc": "Initial value" },
+				{ "name": "min", "desc": "Minimum" },
+				{ "name": "max", "desc": "Maximum" }
+			]
+		},
+
+		{
+			"title": "Buttons",
+			"desc": "Button constant strings.",
+			"list": [
+				{ "left": "Left button. Mapped to <b>Left Arrow Key</b> and <b>S Key</b>." },
+				{ "right": "Right button. Mapped to **Right Arrow Key** and **F Key**." },
+				{ "up": "Up button. Mapped to **Up Arrow Key** and **E Key**." },
+				{ "down": "Down button. Mapped to **Down Arrow Key** and **D Key**." },
+				{ "a": "A button. Mapped to **Z Key** and **K Key**." },
+				{ "b": "B button. Mapped to **X Key** and **L Key**." },
+				{ "start": "Start button. Mapped to **Enter Key** and **Numpad Enter Key**." },
+				{ "left_mouse": "Left mouse button." },
+				{ "middle_mouse": "Middle mouse button." },
+				{ "right_mouse": "Right mouse button." }
+			]
+		}
+	]
+}

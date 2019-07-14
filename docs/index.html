@@ -1,0 +1,267 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Mikro API</title>
+	</head>
+	<body>
+		<div class="content">
+			<div class="sidebar">
+				<h1 id="mikro">
+					<span class="span">
+						<img class="logo" src="./logo.png">
+					</span>
+					<span class="text"><i>Mikro API</i></span>
+				</h1>
+				<hr>
+				<div id="links"></div>
+			</div>
+			<div class="main">
+				<div id="entries">
+					<div id="start">
+						<h1>Getting Started</h1>
+						<hr>
+						<p>
+							Mikro (pronounced <u>mee-cro</u>), is a really simple game platform/engine
+							intended for <u>simple</u> games.
+							It uses Lua scripting for the games and it's implemented in C++ for the <i>full speed</i>.
+
+							It supports some basic shapes, sprites, animations, simple sounds and music, and everything is
+							limited to a 320x240 screen, upscaled to a 640x480 window.
+
+							You can get Mikro <a href="https://github.com/DCubix/Mikro">here</a>.
+
+							For you to run any game, just drag your Lua script to the executable and done.
+							Here's a simple "Hello World program":
+						</p>
+						<pre>
+							<code class="lua">
+local x = 0.0
+function _init()
+	print("Hello World Started!")
+end
+
+function _draw()
+	mik.clear(128, 80, 20)
+	mik.line(0, 0, 100, 100,  255, 255, 0)
+	mik.circf(x, 100, 12,  0, 255, 255)
+end
+
+function _update(dt)
+	x = x + dt
+end
+
+function _exit()
+	print("Hello World Finished!")
+end
+							</code>
+						</pre>
+						<p>
+							Now you can check out the API to learn more about all the functionality.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<style type="text/css">
+			#entries {
+				font-family: monospace;
+			}
+
+			#mikro {
+				font-family: monospace;
+				font-size: 24px;
+				display: table;
+				width: 100%;
+			}
+
+			.span, .text {
+				vertical-align: middle;
+				display: table-cell;
+			}
+
+			.sidebar {
+				height: 100%; /* Full-height: remove this if you want "auto" height */
+				width: 256px; /* Set the width of the sidebar */
+				position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+				z-index: 1; /* Stay on top */
+				top: 0; /* Stay at the top */
+				left: 0;
+				overflow-x: hidden; /* Disable horizontal scroll */
+				padding: 20px;
+				box-sizing: border-box;
+			}
+
+			.main {
+				margin-left: 256px; /* Same as the width of the sidebar */
+				padding: 0px 10px;
+				box-sizing: border-box;
+			}
+
+			@media screen and (max-height: 450px) {
+				.sidenav {padding-top: 15px;}
+				.sidenav a {font-size: 18px;}
+			}
+
+		</style>
+
+		<script type="text/javascript">
+			function readTextFile(file, callback) {
+				var rawFile = new XMLHttpRequest();
+				rawFile.overrideMimeType("application/json");
+				rawFile.open("GET", file, true);
+				rawFile.onreadystatechange = function() {
+					if (rawFile.readyState === 4 && rawFile.status == "200") {
+						callback(rawFile.responseText);
+					}
+				}
+				rawFile.send(null);
+			}
+
+			window.onload = function() {
+				readTextFile("./api.json", function(txt) {
+					let obj = JSON.parse(txt);
+					let ent = document.getElementById("entries");
+					let links = [];
+					for (let e of obj.entries) {
+						let root = document.createElement("p");
+						// let fn = document.createElement("font");
+						// fn.color = "darkblue";
+						// fn.innerText = "function ";
+						// root.appendChild(fn);
+
+						root.style.fontSize = "16px";
+						root.style.fontFamily = "monospace";
+						root.style.marginTop = "0";
+						root.style.backgroundColor = "#d5e0f0";
+						root.style.padding = "6px";
+
+						if (e.title) {
+							// add name
+							let name = document.createElement("a");
+							let id = e.title.replace(" ", "_");
+							name.href = "./#" + id;
+							name.id = id;
+							name.innerHTML += "<b>" + e.title + "</b>";
+							name.style.color = "black";
+							root.appendChild(name);
+
+							links.push({ "name": name.innerHTML, "href": name.href });
+
+							let entr = document.createElement("div");
+							entr.appendChild(root);
+
+							//entr.style.width = "40vw";
+							entr.style.backgroundColor = "#eee";
+							entr.style.padding = "10px";
+							entr.style.fontFamily = "monospace";
+							entr.style.fontSize = "14px";
+							entr.style.marginBottom = "10px";
+							entr.style.boxShadow = "0 5px 7px rgba(0, 0, 0, 0.3)";
+
+							let lst = document.createElement("ul");
+							lst.style.fontSize = "14px";
+							lst.style.fontFamily = "monospace";
+							for (let k of e.list) {
+								let n = Object.keys(k)[0];
+								let v = k[n];
+								let li = document.createElement("li");
+								li.innerHTML = "<b>" + n + "</b>: " + v;
+								lst.appendChild(li);
+							}
+							entr.appendChild(lst);
+							ent.appendChild(entr);
+						} else {
+							// add name
+							let name = document.createElement("a");
+							let id = e.ns + "_" + e.func;
+							name.href = "./#" + id;
+							name.id = id;
+							if (e.ns) {
+								name.innerHTML += e.ns + ".";
+							}
+							name.innerHTML += "<b>" + e.func + "</b>";
+							name.style.color = "black";
+							root.appendChild(name);
+
+							links.push({ "name": name.innerHTML, "href": name.href });
+
+							// add args
+							let args = document.createElement("span");
+							args.appendChild(document.createTextNode("("));
+							if (e.args) {
+								for (let arg of e.args) {
+									let el = document.createElement("span");
+									el.appendChild(document.createTextNode(arg.name));
+									if (arg.default !== undefined) {
+										let dv = document.createElement("font");
+										dv.color = "darkred";
+										dv.innerText = arg.default;
+										el.appendChild(document.createTextNode(" = "));
+										el.appendChild(dv);
+									}
+									args.appendChild(el);
+									args.appendChild(document.createTextNode(", "));
+								}
+								args.removeChild(args.lastChild);
+							}
+							args.appendChild(document.createTextNode(")"));
+							root.appendChild(args);
+
+							let entr = document.createElement("div");
+							entr.appendChild(root);
+
+							//entr.style.width = "40vw";
+							entr.style.backgroundColor = "#eee";
+							entr.style.padding = "10px";
+							entr.style.fontFamily = "monospace";
+							entr.style.fontSize = "14px";
+							entr.style.marginBottom = "10px";
+							entr.style.boxShadow = "0 5px 7px rgba(0, 0, 0, 0.3)";
+
+							let desc = document.createElement("p");
+							desc.innerHTML = e.desc;
+							desc.style.marginTop = "0";
+							desc.style.padding = "10px";
+							desc.style.backgroundColor = "#ccc";
+							entr.appendChild(desc);
+
+							let params = document.createElement("h4");
+							params.innerText = "Parameters";
+							entr.appendChild(params);
+
+							if (e.args) {
+								let lst = document.createElement("ul");
+								for (let arg of e.args) {
+									let li = document.createElement("li");
+									li.innerHTML = "<b>" + arg.name + "</b>: " + arg.desc;
+									lst.appendChild(li);
+								}
+								entr.appendChild(lst);
+							}
+
+							ent.appendChild(entr);
+						}
+					}
+
+					let linksC = document.getElementById("links");
+					let ul = document.createElement("ul");
+					for (let link of links) {
+						let li = document.createElement("li");
+						let a = document.createElement("a");
+						a.href = link.href;
+						a.innerHTML = link.name;
+						li.appendChild(a);
+						ul.appendChild(li);
+					}
+					linksC.appendChild(ul);
+				});
+			};
+		</script>
+
+		<link rel="stylesheet" href="./highlight/styles/zenburn.css">
+		<script src="./highlight/highlight.pack.js"></script>
+		<script>hljs.initHighlightingOnLoad();</script>
+	</body>
+</html>
