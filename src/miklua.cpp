@@ -498,12 +498,6 @@ namespace mik {
 		return 1;
 	}
 
-	MIK_LUA(array) {
-		int size = luaL_checkinteger(L, 1);
-		lua_createtable(L, size, 0);
-		return 1;
-	}
-
 	#define MIK_ENTRY(name) { #name, mik_##name }
 	static const luaL_Reg miklib[] = {
 		MIK_ENTRY(quit),
@@ -547,7 +541,6 @@ namespace mik {
 		MIK_ENTRY(pan),
 		MIK_ENTRY(play_music),
 		MIK_ENTRY(stop_music),
-		MIK_ENTRY(array),
 		{ nullptr, nullptr }
 	};
 
@@ -563,7 +556,6 @@ namespace mik {
 		if (msg) {
 			message.append(msg);
 		}
-
 		luaL_traceback(L, L, message.c_str(), 1);
 		return 1;
 	}
