@@ -32,7 +32,10 @@
 
 							You can get Mikro <a href="https://github.com/DCubix/Mikro">here</a>.<br><br>
 
-							For you to run any game, just drag your Lua script to the executable and done.<br>
+							To run a game, just drag your Lua script (or a cartridge file) to the executable and done.<br>
+							<br>
+							Building a cartridge is as easy as <span class="code">./mik game.lua --dist</span><br><br>
+
 							Here's a simple "Hello World program":
 						</p>
 						<pre>
@@ -177,6 +180,13 @@ end
 			.argsel {
 				background: #d5e0f0;
 			}
+
+			.code {
+				padding: 2px;
+				font-family: monospace;
+				color: #eee;
+			}
+
 /*
 			.stc:hover::before {
 				content: '🔗';
