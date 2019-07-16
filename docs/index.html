@@ -24,15 +24,15 @@
 						<hr>
 						<p>
 							Mikro (pronounced <u>mee-cro</u>), is a really simple game platform/engine
-							intended for <u>simple</u> games.
-							It uses Lua scripting for the games and it's implemented in C++ for the <i>full speed</i>.
+							intended for <u>simple</u> games.<br>
+							It uses Lua scripting for the games and it's implemented in C++ for the <i>full speed</i>.<br>
 
 							It supports some basic shapes, sprites, animations, simple sounds and music, and everything is
-							limited to a 320x240 screen, upscaled to a 640x480 window.
+							limited to a 320x240 screen, upscaled to a 640x480 window.<br><br>
 
-							You can get Mikro <a href="https://github.com/DCubix/Mikro">here</a>.
+							You can get Mikro <a href="https://github.com/DCubix/Mikro">here</a>.<br><br>
 
-							For you to run any game, just drag your Lua script to the executable and done.
+							For you to run any game, just drag your Lua script to the executable and done.<br>
 							Here's a simple "Hello World program":
 						</p>
 						<pre>
@@ -58,7 +58,8 @@ end
 							</code>
 						</pre>
 						<p>
-							Now you can check out the API to learn more about all the functionality.
+							Now you can check out the API to learn more about all the functionality.<br>
+							And you can also check out some example games <a href="https://github.com/DCubix/Mikro/tree/master/res">here</a>.
 						</p>
 					</div>
 				</div>
@@ -105,9 +106,123 @@ end
 				.sidenav a {font-size: 18px;}
 			}
 
+			.menuItem {
+				padding: 2px;
+				border-bottom: 1px solid #bbb;
+				cursor: pointer;
+			}
+
+			.menuItem:hover {
+				background: #ddd;
+			}
+
+			.menuItem:last-child {
+				border-bottom: none;
+			}
+
+			.selected {
+				background: #d5e0f0;
+			}
+
+			.root {
+				font-size: 16px;
+				font-family: monospace;
+				margin-top: 0;
+				padding: 6px;
+				background: #d5e0f0;
+			}
+
+			.entry {
+				background: #eee;
+				padding: 10px;
+				font-family: monospace;
+				font-size: 14px;
+				margin-bottom: 10px;
+				box-shadow: 0 5px 5px rgba(0, 0, 0, 0.3);
+			}
+
+			.list {
+				font-family: monospace;
+				font-size: 14px;
+				list-style: none;
+				padding-left: 20px;
+				margin: 0;
+			}
+
+			.desc {
+				font-family: monospace;
+				font-size: 14px;
+				margin-top: 0;
+				padding: 10px;
+				background: #ccc;
+			}
+
+			.stc {
+				font-family: monospace;
+				font-size: 14px;
+				color: black;
+			}
+
+			.arg {
+				font-family: monospace;
+				font-size: 14px;
+				color: #555;
+				cursor: pointer;
+			}
+
+			.arg:hover {
+				text-decoration: underline;
+			}
+
+			.argsel {
+				background: #d5e0f0;
+			}
+/*
+			.stc:hover::before {
+				content: '🔗';
+				font-family: monospace;
+				font-size: 14px;
+				color: black;
+				text-decoration: none;
+			} */
+
+			#navigation {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+
+			h1, h2, h3, h4, h5, h6 {
+				margin-top: 5px;
+				margin-bottom: 5px;
+			}
+
 		</style>
 
 		<script type="text/javascript">
+			var sel = null;
+			var arg = null;
+
+			function scrollToId(id) {
+				if (sel !== null) {
+					sel.classList.remove("selected");
+				}
+				document.getElementById(id).scrollIntoView({ behavior: "smooth" });
+
+				let mnu = document.getElementById(id + "_item");
+				mnu.classList.add("selected");
+				sel = mnu;
+			}
+
+			function hoverArg(id) {
+				if (arg !== null) {
+					arg.classList.remove("argsel");
+				}
+				if (id === null) return;
+				let el = document.getElementById(id + "_desc");
+				el.classList.add("argsel");
+				arg = el;
+			}
 
 			function readTextFile(file, callback) {
 				var rawFile = new XMLHttpRequest();
@@ -128,16 +243,7 @@ end
 					let links = [];
 					for (let e of obj.entries) {
 						let root = document.createElement("p");
-						// let fn = document.createElement("font");
-						// fn.color = "darkblue";
-						// fn.innerText = "function ";
-						// root.appendChild(fn);
-
-						root.style.fontSize = "16px";
-						root.style.fontFamily = "monospace";
-						root.style.marginTop = "0";
-						root.style.backgroundColor = "#d5e0f0";
-						root.style.padding = "6px";
+						root.classList.add("root");
 
 						if (e.title) {
 							// add name
@@ -145,26 +251,20 @@ end
 							let id = e.title.replace(" ", "_");
 							name.href = "./#" + id;
 							name.id = id;
+							name.classList.add("stc");
 							name.innerHTML += "<b>" + e.title + "</b>";
 							name.style.color = "black";
 							root.appendChild(name);
 
-							links.push({ "name": name.innerHTML, "href": name.href });
+							links.push({ name: name.innerHTML, href: name.href, id: id });
 
 							let entr = document.createElement("div");
 							entr.appendChild(root);
 
-							//entr.style.width = "40vw";
-							entr.style.backgroundColor = "#eee";
-							entr.style.padding = "10px";
-							entr.style.fontFamily = "monospace";
-							entr.style.fontSize = "14px";
-							entr.style.marginBottom = "10px";
-							entr.style.boxShadow = "0 5px 7px rgba(0, 0, 0, 0.3)";
+							entr.classList.add("entry");
 
 							let lst = document.createElement("ul");
-							lst.style.fontSize = "14px";
-							lst.style.fontFamily = "monospace";
+							lst.classList.add("list");
 							for (let k of e.list) {
 								let n = Object.keys(k)[0];
 								let v = k[n];
@@ -179,6 +279,7 @@ end
 							let name = document.createElement("a");
 							let id = e.ns + "_" + e.func;
 							name.href = "./#" + id;
+							name.classList.add("stc");
 							name.id = id;
 							if (e.ns) {
 								name.innerHTML += e.ns + ".";
@@ -187,7 +288,7 @@ end
 							name.style.color = "black";
 							root.appendChild(name);
 
-							links.push({ "name": name.innerHTML, "href": name.href });
+							links.push({ name: name.innerHTML, href: name.href, id: id });
 
 							// add args
 							let args = document.createElement("span");
@@ -195,6 +296,12 @@ end
 							if (e.args) {
 								for (let arg of e.args) {
 									let el = document.createElement("span");
+									el.id = "arg_" + arg.name + "_" + e.func;
+									el.classList.add("arg");
+
+									el.onmouseenter = function() { hoverArg(el.id); };
+									el.onmouseleave = function() { hoverArg(null); };
+
 									el.appendChild(document.createTextNode(arg.name));
 									if (arg.default !== undefined) {
 										let dv = document.createElement("font");
@@ -214,19 +321,11 @@ end
 							let entr = document.createElement("div");
 							entr.appendChild(root);
 
-							//entr.style.width = "40vw";
-							entr.style.backgroundColor = "#eee";
-							entr.style.padding = "10px";
-							entr.style.fontFamily = "monospace";
-							entr.style.fontSize = "14px";
-							entr.style.marginBottom = "10px";
-							entr.style.boxShadow = "0 5px 7px rgba(0, 0, 0, 0.3)";
+							entr.classList.add("entry");
 
 							let desc = document.createElement("p");
 							desc.innerHTML = e.desc;
-							desc.style.marginTop = "0";
-							desc.style.padding = "10px";
-							desc.style.backgroundColor = "#ccc";
+							desc.classList.add("desc");
 							entr.appendChild(desc);
 
 							let params = document.createElement("h4");
@@ -235,8 +334,10 @@ end
 
 							if (e.args) {
 								let lst = document.createElement("ul");
+								lst.classList.add("list");
 								for (let arg of e.args) {
 									let li = document.createElement("li");
+									li.id = "arg_" + arg.name + "_" + e.func + "_desc";
 									li.innerHTML = "<b>" + arg.name + "</b>: " + arg.desc;
 									lst.appendChild(li);
 								}
@@ -265,16 +366,21 @@ end
 
 					let linksC = document.getElementById("links");
 					let ul = document.createElement("ul");
+					ul.id = "navigation";
 					for (let link of links) {
 						let li = document.createElement("li");
-						let a = document.createElement("a");
-						a.href = link.href;
-						a.innerHTML = link.name;
-						li.appendChild(a);
+						li.innerHTML = link.name;
+						li.id = link.id + "_item";
+						li.onclick = function() { scrollToId(link.id); };
+						li.classList.add("menuItem");
 						ul.appendChild(li);
 					}
 					linksC.appendChild(ul);
 				});
+
+				setTimeout(function() {
+					scrollToId(location.hash.substr(1));
+				}, 500);
 			};
 		</script>
 
