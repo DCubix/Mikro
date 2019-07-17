@@ -3,6 +3,7 @@ ninja = nil
 font = nil
 anim = nil
 pal = nil
+imga = nil
 
 music1 = nil
 music2 = nil
@@ -17,6 +18,7 @@ letters = {}
 t = 0
 
 function _init()
+	imga = mik.load_sprite("../res/b.png")
 	ninja = mik.load_sprite("../res/ninja.png", 7, 4)
 	font = mik.load_sprite("../res/font.png", 1, #charMap)
 
@@ -91,6 +93,7 @@ end
 
 function _draw()
 	mik.clear()
+	mik.spr(imga, 0, 0)
 	mik.aspr(ninja, 160, 120)
 
 	for i = 1, #letters do
@@ -98,5 +101,5 @@ function _draw()
 		mik.chr(font, charMap, lt.c, lt.x, lt.y)
 	end
 
-	mik.spr(pal, 0, 0)
+	mik.spr(pal, mik.width() - mik.width(pal), 0)
 end
